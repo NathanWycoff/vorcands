@@ -36,6 +36,7 @@ names(opt) <- competitors
 #X <- matrix(runif(ninit*m), ncol=m) ## 
 X <- randomLHS(ninit, m)
 
+dir.create('./sim_inits/', showWarnings = FALSE
 write.csv(X, file = paste('./sim_inits/',func,'_',seed,'.csv',sep=''))
 
 #apply(X,1,f)

@@ -15,6 +15,7 @@ The license information for Vorcands does not cover those libraries.
 ## Installation Instructions:
 - Install RANN.Linf
 - Install CRAN R packages 
+    install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp"))
 - Make python venv.
 - Install TuRBO
 - Install python packages:

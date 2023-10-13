@@ -16,12 +16,13 @@ sim_args.txt
 *.RData
 sim_out/*
 
+sim_inits/*
+
 #other 
 ./gym_vids
 
 *.npz
 *.json
-*.csv
 
 TuRBO/turbo.egg-info/*
 TuRBO/turbo/__pycache__/*

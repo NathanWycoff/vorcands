@@ -99,6 +99,7 @@ if (test) {
 ncands <- min(5000,100*m)
 
 root <- './sim_out/'
+dir.create(root, showWarnings = FALSE
 sim_path <- paste(root,func,'/',sep='')
 time_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_time/',sep='')
 #opt_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_opt/',sep='')
