@@ -101,8 +101,10 @@ getXs <- function(ts, Xb, U) {
 get_nn <- function(X1, X2, K, norm = 'l2') {
     if (norm=='l2') {
         neigh <- RANN::nn2(X1, X2, K)
+        stop("Not implemented for portability reasons.")
     } else if (norm=='l1') {
-        neigh <- RANN.L1::nn2(X1, X2, K)
+        #neigh <- RANN.L1::nn2(X1, X2, K)
+        stop("Not implemented for portability reasons.")
     } else if (norm=='linf') {
         neigh <- RANN.Linf::nn2(X1, X2, K)
         ##D <- matrix(NA, nrow=nrow(X1),ncol=nrow(X2))

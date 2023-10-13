@@ -99,7 +99,7 @@ if (test) {
 ncands <- min(5000,100*m)
 
 root <- './sim_out/'
-dir.create(root, showWarnings = FALSE
+dir.create(root, showWarnings = FALSE)
 sim_path <- paste(root,func,'/',sep='')
 time_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_time/',sep='')
 #opt_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_opt/',sep='')
@@ -119,21 +119,29 @@ time_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_time/',sep='')
 # 'bfgs' - BFGS + finite differencing
 # 'nm' - Nelder-Meade Simplex
 
-#competitors <- c(
-#                'nm',
-#                'bfgs',
-#                'gp.ei.lhs',
-#                'gp.ei.voriRAS',
-#                'gp.ei.voriRIS',
-#                'gp.ei.voriRLS',
-#                'gp.ei.opt'
-#                )
-
-competitors <- c(
-                'gp.ei.voriRAS',
-                'gp.ei.vor1RAS',
-                'gp.ei.vor2RAS'
+if (test) {
+  competitors <- c(
+                'gp.ei.lhs',
+                'gp.ei.voriRAS'
                 )
+} else {
+  competitors <- c(
+                'nm',
+                'bfgs',
+                'gp.ei.lhs',
+                'gp.ei.voriRAS',
+                'gp.ei.voriRIS',
+                'gp.ei.voriRLS',
+                'gp.ei.opt'
+                )
+}
+
+
+#competitors <- c(
+#                'gp.ei.voriRAS',
+#                'gp.ei.vor1RAS',
+#                'gp.ei.vor2RAS'
+#                )
 
 ltys <- sapply(competitors, function(comp) {
     csplit <- strsplit(comp,"\\.")[[1]]
