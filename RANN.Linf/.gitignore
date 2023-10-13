@@ -1,0 +1,6 @@
+src/*.o
+src/*.so
+.Rproj.user
+.Rhistory
+revdep/
+test/

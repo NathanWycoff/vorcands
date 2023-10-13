@@ -1,0 +1,13 @@
+^docs$
+^_pkgdown\.yml$
+.gitignore
+.project
+.settings
+^test$
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
+^cran-comments\.md$
+^cran-comments-l1\.md$
+^revdep$
+^tic\.R$

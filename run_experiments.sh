@@ -1,0 +1,18 @@
+start_big=`date +%s`
+for func in ackley12 levy10 rosen10 push rover pomp10log dacca lunar 
+do
+    echo $func
+    ./parrun.sh $func
+done
+end_big=`date +%s`
+runtime_big=$((end_big-start_big))
+echo $runtime_big
+
+#start_big=`date +%s`
+#for func in ackley12 levy10 rosen10 push rover pomp10log dacca lunar 
+#do
+#    Rscript R/plot_generic.R $func
+#done
+#end_big=`date +%s`
+#runtime_big=$((end_big-start_big))
+#echo $runtime_big
