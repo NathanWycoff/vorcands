@@ -19,4 +19,4 @@ The license information for Vorcands does not cover those libraries.
 - Install python packages:
     pip install pygame gym[box2d] botorch rpy2 matplotlib pandas
 - Install CRAN R packages 
-    install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","deepgp"))
+    install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","lhs"))

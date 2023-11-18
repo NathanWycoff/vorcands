@@ -1,6 +1,7 @@
 source("R/functions/function_lib.R")
 
-test <- TRUE
+#test <- TRUE
+test <- FALSE
 
 if (test) {
   print("TESTING ONLY!")
@@ -102,6 +103,7 @@ root <- './sim_out/'
 dir.create(root, showWarnings = FALSE)
 sim_path <- paste(root,func,'/',sep='')
 time_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_time/',sep='')
+crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 #opt_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_opt/',sep='')
 
 # Prefix:
@@ -118,24 +120,56 @@ time_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_time/',sep='')
 # "Traditional" methods:
 # 'bfgs' - BFGS + finite differencing
 # 'nm' - Nelder-Meade Simplex
-
 if (test) {
   competitors <- c(
-                'gp.ei.lhs',
-                'gp.ei.voriRAS'
-                )
+    "gp.ei.lhs",
+    "gp.ei.voriRAS"
+  )
 } else {
   competitors <- c(
-                'nm',
-                'bfgs',
-                'gp.ei.lhs',
-                'gp.ei.voriRAS',
-                'gp.ei.voriRIS',
-                'gp.ei.voriRLS',
-                'gp.ei.opt'
-                )
+    "nm",
+    "bfgs",
+    "gp.ei.opt",
+    "gp.ei.lhs",
+    "gp.ei.corner",
+    "gp.ei.voriRIS",
+    "gp.ei.voriRLS",
+    "gp.ei.voriRAS"
+  )
 }
 
+pretty_method_names <- list(
+  nm = 'Nelder-Meade',
+  bfgs = 'BFGS',
+  gp.ei.opt = 'Optimized GP',
+  gp.ei.lhs = 'LHS Cands GP',
+  gp.ei.corner = 'Corner GP',
+  gp.ei.voriRIS = 'Vor Cands Walk GP',
+  gp.ei.voriRLS = 'Vor Cands Proj GP',
+  gp.ei.voriRAS = 'Vor Cands Alt GP'
+)
+
+short_method_names <- list(
+  nm = 'NM',
+  bfgs = 'BFGS',
+  gp.ei.opt = 'GP-Opt',
+  gp.ei.lhs = 'GP-LHS',
+  gp.ei.corner = 'GP-Corner',
+  gp.ei.voriRIS = 'GP-VWalk',
+  gp.ei.voriRLS = 'GP-VProj',
+  gp.ei.voriRAS = 'GP-VAlt'
+)
+
+pretty_sim_names <- list(
+  ackley10 = 'Random Ackley (P=10)',
+  levy10 = 'Levy (P=10)',
+  rosen10 = 'Rosen (P=10)',
+  lunar = 'Pygame Lunar (P=12)',
+  push = 'Pygame Push (P=14)',
+  rover = 'Pygame Rover (P=60)',
+  pomp10log = 'Pomp10 Simulator (P=10)',
+  dacca = 'Dacca Cholera Simulator (P=24)'
+)
 
 #competitors <- c(
 #                'gp.ei.voriRAS',
@@ -151,9 +185,13 @@ ltys <- sapply(competitors, function(comp) {
     if (comp %in% c("bfgs","nm")) {
         return(1)
     } else if (acq=='ei') {
+      if (substr(os,1,3)=='vor') {
         return(2)
+      } else {
+        return(1)
+      }
     } else {
-
+      return(1)
         }
     #} else if (acq=='ts') {
     #    return(3)
@@ -194,5 +232,7 @@ ltys <- sapply(competitors, function(comp) {
       if (args=='1RAS') return('orange')
       if (args=='2RAS') return('green')
       if (grepl("fast",os,fixed=TRUE)) return('orange')
+    } else if (os=='corner') {
+      return('orange')
     }
  })

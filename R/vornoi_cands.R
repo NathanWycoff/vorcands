@@ -101,10 +101,10 @@ getXs <- function(ts, Xb, U) {
 get_nn <- function(X1, X2, K, norm = 'l2') {
     if (norm=='l2') {
         neigh <- RANN::nn2(X1, X2, K)
-        stop("Not implemented for portability reasons.")
+        #stop("Not implemented for portability reasons.")
     } else if (norm=='l1') {
-        #neigh <- RANN.L1::nn2(X1, X2, K)
-        stop("Not implemented for portability reasons.")
+        neigh <- RANN.L1::nn2(X1, X2, K)
+        #stop("Not implemented for portability reasons.")
     } else if (norm=='linf') {
         neigh <- RANN.Linf::nn2(X1, X2, K)
         ##D <- matrix(NA, nrow=nrow(X1),ncol=nrow(X2))
@@ -302,7 +302,7 @@ vorwalk <- function(X, ns, U, norm = 'l2', in_iters = 10, half2bound = TRUE, plo
 
     #changed_mind <- expand_point & !expand_bound
     Xs <- pmax(pmin(Xs,1),0)
-    ret <- list(Xs=Xs)
+    ret <- list(Xs=Xs,ns=ns)
     return(ret)
 }
 

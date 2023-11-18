@@ -1,9 +1,8 @@
 ## Opt-fringecands?
-
 #library(Rfast)
 
-#addturbo <- FALSE
-addturbo <- TRUE
+addturbo <- FALSE
+#addturbo <- TRUE
 
 func <- commandArgs(trailingOnly=TRUE)[1]
 source("R/sim_settings.R")
@@ -17,6 +16,9 @@ if (addturbo) {
   competitors <- c(competitors, 'TuRBO','vor.TuRBO')
 }
 
+pretty_comp <- sapply(competitors, function(x) pretty_method_names[[x]])
+short_comp <- sapply(competitors, function(x) short_method_names[[x]])
+
 ### Progress
 files <- list.files(sim_path, full.names = TRUE)
 
@@ -26,11 +28,34 @@ for (f in files) {
 }
 
 reps <- length(dfs)
-progs <- lapply(competitors, function(i) matrix(0,end,reps))
+progs <- lapply(competitors, function(i) matrix(NA,end,reps))
 names(progs) <- competitors
+#torem <- c('bfgs')
+torem <- c()
 for (comp in competitors) {
-  for (i in 1:reps) {
-    progs[[comp]][,i] <- dfs[[i]][,comp]
+  if ((comp %in% colnames(dfs[[1]]))) {
+    for (i in 1:reps) {
+      progs[[comp]][,i] <- dfs[[i]][,comp]
+    }
+  } else {
+    torem <- c(torem, comp)
+  }
+}
+
+competitors <- competitors[!(competitors %in% torem)]
+progs <- progs[!(names(progs) %in% torem)]
+pretty_comp <- pretty_comp[!(names(pretty_comp) %in% torem)]
+short_comp <- short_comp[!(names(short_comp) %in% torem)]
+cols <- cols[!(names(cols) %in% torem)]
+ltys <- ltys[!(names(ltys) %in% torem)]
+
+if (func=='dacca') {
+  for (comp in competitors) {
+    progs[[comp]] <- log10(exp(progs[[comp]]) - 3750)
+  }
+} else if (func=='pomp10log') {
+  for (comp in competitors) {
+    progs[[comp]] <- log10(10^(progs[[comp]]) - 630)
   }
 }
 
@@ -38,16 +63,32 @@ for (comp in competitors) {
 #progs[['sur.ei.vor']][800,]
 #min(progs[['sur.ei.triBS']][800,])
 
-pdf(paste(func,'_norm.pdf',sep=''))
-#ul <- max(sapply(progs, max))
-ul <- max(sapply(progs, function(x) quantile(x, 0.8)))
-#ul <- quantile(progs[['sur.ei.opt']],0.8)
-ll <- min(sapply(progs, function(a) min(a, na.rm=T)))
-lwd <- 5
-plot(NA,NA,xlim=c(1,end), ylim=c(ll,ul), main = func, xlab='n: blackbox evaluations', ylab='median best observed value')
+#### Main progress pdf.
+pdf(paste(func,'.pdf',sep=''), width = 4, height = 4)
+par(mar=c(3.0,3,1,0.1)+0.1)
+par(mgp=c(1.5,0.6,0)+0.1)
+##ul <- max(sapply(progs, max))
+#ul <- max(sapply(progs, function(x) quantile(x, 0.8)))
+##ul <- quantile(progs[['sur.ei.opt']],0.8)
+#ll <- min(sapply(progs, function(a) min(a, na.rm=T)))
 
 qu <- pmax(0,pmin(1,0.5+1.96*sqrt(0.25/reps)))
 ql <- pmax(0,pmin(1,0.5-1.96*sqrt(0.25/reps)))
+
+budget <- nrow(progs[[1]])
+#start_at = budget / 2
+pcomp <- grep("^gp.*", competitors, value = TRUE)
+ul <- max(sapply(pcomp, function(x) quantile(progs[[x]][budget,], 1.1*qu, na.rm = T)), na.rm = T)
+ll <- min(sapply(pcomp, function(x) quantile(progs[[x]][budget,], 0.9*ql, na.rm = T)), na.rm = T)
+
+lwd <- 5
+if (func %in% c("pomp10log","dacca")) {
+  ylab <- 'Log10 Optimality Gap'
+} else {
+  ylab <- 'Best Observed Value'
+}
+plot(NA,NA,xlim=c(1,end), ylim=c(ll,ul), main = pretty_sim_names[[func]], xlab='n: blackbox evaluations', ylab=ylab, font.lab = 2)
+
 
 max_intervals <- Inf
 
@@ -66,21 +107,37 @@ for (comp in competitors) {
     }
   }
 }
-legend('topright', legend = competitors, lty=ltys,col=cols, lwd = lwd)
-legend('bottomleft', legend = c(ql,qu), lty=ltys[competitors[[1]]],col=cols[competitors[[1]]], lwd = 0.5*lwd)
+#legend('topright', legend = competitors, lty=ltys,col=cols, lwd = lwd, bg = 'white')
+#legend('bottomleft', legend = competitors, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5)
+legend('bottomleft', legend = pretty_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5)
 dev.off()
 
-pdf(paste(func,'_box_norm.pdf',sep=''), width = 9, height = 5)
+pdf(paste(func,'_box.pdf',sep=''), width = 7, height = 4)
+par(mar=c(4.7,2,1,0)+0.1)
+par(mgp=c(1,0.6,0)+0.1)
 par(mfrow=c(1,2))
 end <- dim(progs[[1]])[1]
 half <- round(end/2)
-labs <- rep(names(progs), rep(ncol(progs[[1]]),length(names(progs))))
+labs <- unname(rep(sapply(names(progs), function(x) short_method_names[[x]]), rep(ncol(progs[[1]]),length(names(progs)))))
+#factor(labs, levels = unique(labs))
+#labs <- factor(labs, levels = c("nm","bfgs","gp.ei.opt","gp.ei.lhs","gp.ei.voriRIS","gp.ei.voriRLS","gp.ei.voriRAS"))
+labs <- factor(labs, levels = short_comp)
 
 mids <- do.call(c, lapply(progs, function(p) p[half,]))
-boxplot(mids~labs, main = paste("Iteration",half), xlab = '', las = 2)
+if (func=='rosen10') {
+  mids <- log10(mids)
+}
+boxplot(mids~labs, main = paste("Iteration",half), xlab = '', las = 2, ylab='')
+#bp <- boxplot(mids~labs, main = paste("Iteration",half), xlab = '', las = 2, xaxt = "n")
+#tick <- seq_along(bp$names)
+#axis(1, at = tick, labels = FALSE)
+#text(tick-0.3, par("usr")[3] - 0.5, bp$names, srt = 45, xpd = TRUE)
 
 ends <- do.call(c, lapply(progs, function(p) p[end,]))
-boxplot(ends~labs, main = paste("Iteration",end), xlab = '', las = 2)
+if (func=='rosen10') {
+  ends <- log10(ends)
+}
+boxplot(ends~labs, main = paste("Iteration",end), xlab = '', las = 2, angle = 45, ylab='')
 dev.off()
 
 ### Time
@@ -95,8 +152,74 @@ for (f in files) {
 names <- dfs[[1]][,1]
 tdf <- sapply(dfs,function(x) x[,'times'])
 rownames(tdf) <- names
+tdf <- log10(tdf[competitors,])
 
-pdf(paste(func,'_time_norm.pdf',sep=''))
-boxplot(t(tdf))
+rownames(tdf) <- sapply(rownames(tdf), function(n) short_method_names[[n]])
+
+
+pdf(paste(func,'_time.pdf',sep=''), width = 4, height = 4)
+par(mar=c(4.7,3,1,0)+0.1)
+par(mgp=c(2,0.6,0)+0.1)
+#boxplot(t(tdf))
+boxplot(t(tdf), main = 'Elapsed Real Time', xlab = '', las = 2, ylab='log10 Seconds')
 dev.off()
 #}
+
+
+### Acquisition
+#if (!addturbo) {
+files <- list.files(crits_path, full.names = TRUE)
+
+dfs <- list()
+for (f in files) {
+  dfs[[length(dfs)+1]] <-read.csv(f)
+}
+
+reps <- length(dfs)
+progs <- lapply(competitors, function(i) matrix(NA,end-ninit,reps))
+names(progs) <- competitors
+torem <- c()
+for (comp in competitors) {
+  if ((comp %in% colnames(dfs[[1]]))) {
+    for (i in 1:reps) {
+      progs[[comp]][,i] <- dfs[[i]][,comp]
+    }
+  } else {
+    torem <- c(torem, comp)
+  }
+}
+pdf(paste(func,'_crits.pdf',sep=''), width = 4, height = 4)
+par(mar=c(3.0,3,1,0.1)+0.1)
+par(mgp=c(1.5,0.6,0)+0.1)
+
+qu <- pmax(0,pmin(1,0.5+1.96*sqrt(0.25/reps)))
+ql <- pmax(0,pmin(1,0.5-1.96*sqrt(0.25/reps)))
+
+budget <- nrow(progs[[1]])
+pcomp <- grep("^gp.*", competitors, value = TRUE)
+ul <- max(sapply(pcomp, function(x) quantile(progs[[x]][1,], 1.1*qu, na.rm = T)), na.rm = T)
+ll <- min(sapply(pcomp, function(x) quantile(progs[[x]][budget,], 0.9*ql, na.rm = T)), na.rm = T)
+
+lwd <- 5
+ylab <- 'Acquired Expected Improvement'
+plot(NA,NA,xlim=c(1,end), ylim=c(ll,ul), main = pretty_sim_names[[func]], xlab='n: blackbox evaluations', ylab=ylab, font.lab = 2)
+
+
+max_intervals <- Inf
+
+for (comp in competitors) {
+  print(comp)
+  print(cols[[comp]])
+  if (any(is.na(progs[[comp]]))) {
+    print("Skipping nan competitor:")
+    print(comp)
+  } else {
+    points((ninit+1):end, apply(progs[[comp]], 1, function(x) median(x)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+    if (length(competitors) <= max_intervals) {
+      points((ninit+1):end, apply(progs[[comp]], 1, function(x) quantile(x, ql)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+      points((ninit+1):end, apply(progs[[comp]], 1, function(x) quantile(x, qu)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+    }
+  }
+}
+legend('topleft', legend = pretty_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5)
+dev.off()

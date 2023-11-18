@@ -30,6 +30,8 @@ cntl <- lapply(competitors, function(x) 0)
 names(cntl) <- competitors
 prog <- lapply(competitors, function(x) rep(NA, end))
 names(prog) <- competitors
+crits <- lapply(competitors, function(x) rep(NA, end-ninit))
+names(crits) <- competitors
 opt <- lapply(competitors, function(x) rep(NA, m))
 names(opt) <- competitors
 
@@ -97,6 +99,7 @@ for (comp in competitors) {
     os <- do.call(optim.surr, options)
 
     prog[[comp]] <- bov(os$y)
+    crits[[comp]] <- os$crits
     opt[[comp]] <- os$X[which.min(os$y),]
     cntl[[comp]] <- cntl[[comp]] + os$cnt
 
@@ -125,11 +128,8 @@ for (comp in competitors) {
 pdf <- data.frame(prog)
 write.csv(pdf, paste(sim_path,func,'_',seed,'.csv',sep=''))
 
-#odf <- data.frame(opt)
-#write.csv(odf, paste(opt_path,func,'_',seed,'.csv',sep=''))
-
 tdf <- data.frame(times)
 write.csv(tdf, paste(time_path,func,'_',seed,'.csv',sep=''))
 
-#print("That took:")
-#print(Sys.time()-tt)
+cdf <- data.frame(crits)
+write.csv(cdf, paste(crits_path,func,'_',seed,'.csv',sep=''))

@@ -7,11 +7,11 @@ source("R/sim_settings.R")
 dir.create(sim_path, showWarnings = FALSE)
 do.call(file.remove, list(list.files(sim_path, full.names = TRUE)))
 
-#dir.create(opt_path, showWarnings = FALSE)
-#do.call(file.remove, list(list.files(opt_path, full.names = TRUE)))
-
 dir.create(time_path, showWarnings = FALSE)
 do.call(file.remove, list(list.files(time_path, full.names = TRUE)))
+
+dir.create(crits_path, showWarnings = FALSE)
+do.call(file.remove, list(list.files(crits_path, full.names = TRUE)))
 
 ## Make Args.
 aa <- list()

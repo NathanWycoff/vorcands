@@ -54,6 +54,9 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
     Xc2 <- hitricands(X, ncands/2, best = m, astrat = 'nn', half2bound = T)
     Xcand <- rbind(Xc1, Xc2)
 
+  } else if (cands=='corner') {
+    Xcand <- matrix(sample(c(0,1),ncands*ncol(X), replace=T), ncol = ncol(X))
+    Xcand <- Xcand[!duplicated(Xcand),]
   } else if (cands=='lhs') {
     Xcand <- randomLHS(ncands, ncol(X))
   } else {
@@ -270,6 +273,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
     ## optimization loop
     cnt <<- 0
     #best <- c()
+    crits <- rep(0, end-ninit)
     for(i in (ninit+1):end) {
 
       ## slight variations on calls for the different criteria
@@ -283,6 +287,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
       Xc <- solns[,1:ncol(X)]
       #print(dim(Xc))
       wm <- which.max(solns$val)
+      crits[i-ninit] <- max(solns$val)
       #print(paste("Max ei is:", max(solns$val)))
       camefrom <- as.numeric(sapply(strsplit(substr(str_extract(rownames(Xc), "X[0-9]+\\.*"), 2, 10000L),'\\.'), function(x) x[[1]]))
       cf <- camefrom[wm]
@@ -306,7 +311,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
     deleteGPsep(gpi)
 
     #return(list(X=X, y=y, best=best, cnt=cnt))
-    return(list(X=X, y=y, cnt = cnt))
+    return(list(X=X, y=y, cnt = cnt, crits=crits))
   } else if (sur=='tgp') {
    for(i in (ninit+1):end) {
      #out <- optim.step.tgp.simple(f, X = X, Z = y, cands=cands, verb = 0, NN=ncands, nug.p=0, gd=c(1e-5,2), cand_params=cand_params)
@@ -315,7 +320,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
      y <- c(y, f(out))
    }
 
-   return(list(X=X, y=y))
+   return(list(X=X, y=y, crits=crits))
   } else if (sur=='deepgp') {
    for(i in (ninit+1):end) {
      out <- optim.step.deepgp.simple(f, X = X, Z = y, cands=cands, verb=FALSE, NN=ncands, true_g=1e-7, cand_params=cand_params)
@@ -323,7 +328,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
      y <- c(y, f(out))
    }
 
-   return(list(X=X, y=y))
+   return(list(X=X, y=y, crits=crits))
   } else {
     stop("Unknown Surrogate!")
   }
