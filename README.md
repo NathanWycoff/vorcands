@@ -34,6 +34,8 @@ Then, you can get started using candidates by running something like the below c
     points(X[,1],X[,2])
     points(Xcands[,1],Xcands[,2], col = 'red')
 
+In practice, we recommend alternating between "rect" and "lhs" when dealing with high dimensional problems (but "unif" looks much cooler for a 2D plot).
+
 ## To reproduce the results in the paper:
 
 ### Installation Instructions:
