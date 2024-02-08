@@ -13,7 +13,7 @@ The license information for Vorcands does not cover those libraries.
 
 ## To get started using Voronoi Candidates in your projects:
 1) Clone this repo
-2) Install the R package RANN.L1, provided here, maybe by setting your working directory to be the root of this repo, and then running (in your command line) R CMD INSTALL RANN.Linf
+2) Install the R package RANN.Linf, provided here, maybe by setting your working directory to be the root of this repo, and then running (in your command line) R CMD INSTALL RANN.Linf
 3) Install CRAN R packages via running (in R) install.packages(c("Rcpp","lhs"))
 
 Then, you can get started using candidates by running something like the below code:
