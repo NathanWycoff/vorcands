@@ -1,0 +1,13 @@
+Conjecture: the following algo gives points evenly spread across the Voronoi boundary.
+
+Initialize with two random points.
+To get the i+1th point:
+    1) Find the nearest neighbor of all points.
+    2) Take the point whose nearest neighbor is farthest. 
+    3) Project the midpoint of that point and its nearest neighbor onto the voronoi boundary.
+
+hey, what if the two random points are on the same face? That clearly would not explore any other faces.
+
+What if we instead start with the axis-aligned shit? Would that work? Or can that still miss faces?
+
+Regretablly, the issue actually seems to be that i can get caught up in a projection that doesn't improve the max distance, and so just keeps getting tried. Does skipping to the next one solve the problem?

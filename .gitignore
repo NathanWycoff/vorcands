@@ -1,0 +1,33 @@
+# Ignore files created during installaiton.
+build/
+pytricands.egg-info/
+tricands.egg-info/
+pytricands/__pycache__
+tricands/*
+.venv/*
+
+# vim files
+*.swo
+*.swp
+
+*.pdf
+*.png
+*.jpg
+args.txt
+sim_args.txt
+*.RData
+sim_out/*
+
+sim_inits/*
+
+#other 
+./gym_vids
+
+*.npz
+*.json
+
+TuRBO/turbo.egg-info/*
+TuRBO/turbo/__pycache__/*
+
+out.tar.gz
+
