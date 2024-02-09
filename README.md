@@ -45,7 +45,7 @@ Since the numerical experiments use functions written in Python, there are many 
     R CMD INSTALL ./RANN.Linf
 - Make a python virtual environment named ".venv" (R is expecting this name to be used, and for it to exist in the root of this directory.)
     maybe using "python3 -m venv .venv"
-- After loading this venv, install python packages:
+- After loading this venv (in the terminal: "source .venv/bin/activate"), install python packages:
     pip install pygame gym[box2d] botorch rpy2 matplotlib pandas
 - Install CRAN R packages 
     install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","lhs"))
