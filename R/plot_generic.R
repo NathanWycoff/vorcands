@@ -1,20 +1,8 @@
 ## Opt-fringecands?
 #library(Rfast)
 
-#addturbo <- FALSE
-addturbo <- TRUE
-
 func <- commandArgs(trailingOnly=TRUE)[1]
 source("R/sim_settings.R")
-
-ltys[['TuRBO']] <- 1
-ltys[['vor.TuRBO']] <- 1
-cols[['TuRBO']] <- 'orange'
-cols[['vor.TuRBO']] <- 'blue'
-
-if (addturbo) {
-  competitors <- c(competitors, 'TuRBO','vor.TuRBO')
-}
 
 if ('gp.ei.corner' %in% competitors) {
     competitors <- competitors[-which(competitors=='gp.ei.corner')]
