@@ -53,11 +53,17 @@ for (comp in competitors) {
   sur <- csplit[1]
 
   ## Surrogate based methods
-  if (sur%in% c('gp','tgp','deepgp')) {
+  if (sur%in% c('gp','hgp')) {
     acq <- csplit[2]
     os <- csplit[3]
 
     options <- list(sur=sur, f=f, ninit=ninit, m=m, end=end, X=X, criteria=toupper(acq), ncands=ncands, cands=os, ssm = 25)
+    print(sur)
+    if (sur=='hgp') {
+        options$pack <- 'hetGP'
+    } else if (sur=='gp') {
+        options$pack <- 'lagp'
+    } else {print(sur);stop("Unknown sur")}
 
     options$cand_params <- list()
     if (substr(os,1,3)=='vor') {

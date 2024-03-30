@@ -93,7 +93,7 @@ if (func=='goldprice') {
 ninit <- max(3*m,12)
 
 if (test) {
-  end <- 3*m+3
+  end <- 2*ninit
 }
 
 #ninit <- 100
@@ -124,10 +124,11 @@ crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 # 'bfgs' - BFGS + finite differencing
 # 'nm' - Nelder-Meade Simplex
 if (test) {
-  competitors <- c(
-    "gp.ei.lhs",
-    "gp.ei.voriRAS"
-  )
+  #competitors <- c(
+  #  "gp.ei.opt",
+  #  "gp.ei.voriRAS"
+  #)
+  competitors <- c('gp.ei.opt','hgp.ei.opt')
 } else {
   competitors <- c(
     "nm",
