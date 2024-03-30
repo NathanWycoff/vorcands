@@ -64,14 +64,14 @@ par(mgp=c(1.5,0.6,0)+0.1)
 ##ul <- quantile(progs[['sur.ei.opt']],0.8)
 #ll <- min(sapply(progs, function(a) min(a, na.rm=T)))
 
-qu <- pmax(0,pmin(1,0.5+1.96*sqrt(0.25/reps)))
-ql <- pmax(0,pmin(1,0.5-1.96*sqrt(0.25/reps)))
+qu <- pmax(0,pmin(1,1.1*(0.5+1.96*sqrt(0.25/reps))))
+ql <- pmax(0,pmin(1,0.9*(0.5-1.96*sqrt(0.25/reps))))
 
 budget <- nrow(progs[[1]])
 #start_at = budget / 2
 pcomp <- grep("^gp.*", competitors, value = TRUE)
-ul_end <- max(sapply(pcomp, function(x) quantile(progs[[x]][budget,], 1.1*qu, na.rm = T)), na.rm = T)
-ll_end <- min(sapply(pcomp, function(x) quantile(progs[[x]][budget,], 0.9*ql, na.rm = T)), na.rm = T)
+ul_end <- max(sapply(pcomp, function(x) quantile(progs[[x]][budget,], qu, na.rm = T)), na.rm = T)
+ll_end <- min(sapply(pcomp, function(x) quantile(progs[[x]][budget,], ql, na.rm = T)), na.rm = T)
 
 if (substr(func,1,nchar('rosen'))=='rosen') {
     sa <- 100
@@ -79,8 +79,8 @@ if (substr(func,1,nchar('rosen'))=='rosen') {
     sa <- ninit
 }
 
-ul_start <- max(sapply(pcomp, function(x) quantile(progs[[x]][sa,], 1.1*qu, na.rm = T)), na.rm = T)
-ll_start <- min(sapply(pcomp, function(x) quantile(progs[[x]][sa,], 0.9*ql, na.rm = T)), na.rm = T)
+ul_start <- max(sapply(pcomp, function(x) quantile(progs[[x]][sa,], qu, na.rm = T)), na.rm = T)
+ll_start <- min(sapply(pcomp, function(x) quantile(progs[[x]][sa,], ql, na.rm = T)), na.rm = T)
 ul <- max(c(ul_end,ul_start))
 ll <- min(c(ll_end,ll_start))
 
@@ -208,8 +208,8 @@ ql <- pmax(0,pmin(1,0.5-1.96*sqrt(0.25/reps)))
 
 budget <- nrow(progs[[1]])
 pcomp <- grep("^gp.*", competitors, value = TRUE)
-ul <- max(sapply(pcomp, function(x) quantile(progs[[x]][1,], 1.1*qu, na.rm = T)), na.rm = T)
-ll <- min(sapply(pcomp, function(x) quantile(progs[[x]][budget,], 0.9*ql, na.rm = T)), na.rm = T)
+ul <- 1.1*max(sapply(pcomp, function(x) quantile(progs[[x]][1,], qu, na.rm = T)), na.rm = T)
+ll <- 0.9*min(sapply(pcomp, function(x) quantile(progs[[x]][budget,], ql, na.rm = T)), na.rm = T)
 
 lwd <- 5
 ylab <- 'Acquired Expected Improvement'
