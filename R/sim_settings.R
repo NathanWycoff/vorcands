@@ -12,7 +12,9 @@ if (!exists('func')) stop("Need to define func before calling sim_settings.R")
 if (test) {
   reps <- 2
 } else {
-  reps <- 90
+  #reps <- 90
+  print("Only 30 reps!")
+  reps <- 30
 }
 #end <- 250
 
@@ -130,16 +132,17 @@ if (test) {
   #)
   competitors <- c('gp.ei.opt','hgp.ei.opt')
 } else {
-  competitors <- c(
-    "nm",
-    "bfgs",
-    "gp.ei.opt",
-    "gp.ei.lhs",
-    #"gp.ei.corner",
-    "gp.ei.voriRIS",
-    "gp.ei.voriRLS",
-    "gp.ei.voriRAS"
-  )
+  #competitors <- c(
+  #  "nm",
+  #  "bfgs",
+  #  "gp.ei.opt",
+  #  "gp.ei.lhs",
+  #  #"gp.ei.corner",
+  #  "gp.ei.voriRIS",
+  #  "gp.ei.voriRLS",
+  #  "gp.ei.voriRAS"
+  #)
+  competitors <- c('gp.ei.opt','hgp.ei.opt')
 }
 
 if (func=='rover') {
@@ -147,21 +150,22 @@ if (func=='rover') {
     competitors <- competitors[competitors!='gp.ei.opt']
 } 
 
-pretty_method_names <- list(
-  nm = 'Nelder-Meade',
-  bfgs = 'BFGS',
-  gp.ei.opt = 'Optimized GP',
-  gp.ei.lhs = 'LHS Cands GP',
-  gp.ei.corner = 'Corner GP',
-  gp.ei.voriRIS = 'Vor Cands Walk GP',
-  gp.ei.voriRLS = 'Vor Cands Proj GP',
-  gp.ei.voriRAS = 'Vor Cands Alt GP'
-)
+#pretty_method_names <- list(
+#  nm = 'Nelder-Meade',
+#  bfgs = 'BFGS',
+#  gp.ei.opt = 'Optimized GP',
+#  gp.ei.lhs = 'LHS Cands GP',
+#  gp.ei.corner = 'Corner GP',
+#  gp.ei.voriRIS = 'Vor Cands Walk GP',
+#  gp.ei.voriRLS = 'Vor Cands Proj GP',
+#  gp.ei.voriRAS = 'Vor Cands Alt GP'
+#)
 
 short_method_names <- list(
   nm = 'NM',
   bfgs = 'BFGS',
   gp.ei.opt = 'GP-Opt',
+  hgp.ei.opt = 'hetGP-Opt',
   gp.ei.lhs = 'GP-LHS',
   gp.ei.corner = 'GP-Corner',
   gp.ei.voriRIS = 'GP-VWalk',
@@ -218,7 +222,11 @@ ltys <- sapply(competitors, function(comp) {
     } else if (comp=="nm") {
         return("gray")
     } else if (os=='opt') {
-        return('blue')
+        if (csplit[1]=='gp') {
+            return('blue')
+        } else {
+            return('purple')
+        }
     #} else if (os=='tri') {
     #    return('green')
     #} else if (substr(os,1,4)=='loco') {

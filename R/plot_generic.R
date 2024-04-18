@@ -8,7 +8,7 @@ if ('gp.ei.corner' %in% competitors) {
     competitors <- competitors[-which(competitors=='gp.ei.corner')]
 }
 
-pretty_comp <- sapply(competitors, function(x) pretty_method_names[[x]])
+#pretty_comp <- sapply(competitors, function(x) pretty_method_names[[x]])
 short_comp <- sapply(competitors, function(x) short_method_names[[x]])
 
 ### Progress
@@ -36,7 +36,7 @@ for (comp in competitors) {
 
 competitors <- competitors[!(competitors %in% torem)]
 progs <- progs[!(names(progs) %in% torem)]
-pretty_comp <- pretty_comp[!(names(pretty_comp) %in% torem)]
+#pretty_comp <- pretty_comp[!(names(pretty_comp) %in% torem)]
 short_comp <- short_comp[!(names(short_comp) %in% torem)]
 cols <- cols[!(names(cols) %in% torem)]
 ltys <- ltys[!(names(ltys) %in% torem)]
@@ -232,5 +232,5 @@ for (comp in competitors) {
     }
   }
 }
-legend('topleft', legend = pretty_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5)
+legend('topleft', legend = short_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5)
 dev.off()

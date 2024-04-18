@@ -91,7 +91,7 @@ EI.cands <- function(X, y, ym, gpi, pack, ncands=100*ncol(X),
 
 eps <- sqrt(.Machine$double.eps)
 library(lhs)
-optim.crit <- function(X, y, gpi, obj, check, ym, noise=FALSE, multi.start=2*ncol(X)+1, pred=predGPsep, tol=eps, ...)
+optim.crit <- function(X, y, gpi, obj, check, ym, grad = NULL, noise=FALSE, multi.start=2*ncol(X)+1, pred=predGPsep, tol=eps, ...)
 {
     m <- which.min(ym)
     fmin <- ym[m]
@@ -105,8 +105,34 @@ optim.crit <- function(X, y, gpi, obj, check, ym, noise=FALSE, multi.start=2*nco
     xnew <- matrix(NA, nrow=nrow(start), ncol=ncol(X)+1)
     for(i in 1:nrow(start)) {
         if(check(gpi, start[i,], fmin, noise, tol)) { out <- list(value=Inf) }
-        else { out <- optim(start[i,], obj, method="L-BFGS-B", 
+        else { out <- optim(start[i,], obj, gr=grad, method="L-BFGS-B", 
                             lower=0, upper=1, gpi=gpi, fmin=fmin, noise=noise, ...) }
+    ### DB
+    #    obj1 <- function(par, ...) {
+    #        print("par:")
+    #        print(par)
+    #        ret <- obj(par, ...)
+    #        print("ret:")
+    #        print(ret)
+    #        return(ret)
+    #    }
+    #    grad1 <- function(par, ...) {
+    #        print("par:")
+    #        print(par)
+    #        ret <- grad(par, ...)
+    #        print("grad:")
+    #        print(ret)
+    #        if (any(!is.finite(ret))) {
+    #            ret <- numDeriv::grad(obj1, par, ...)
+    #            print("Numerical grad:")
+    #            print(ret)
+    #        }
+    #        return(ret)
+    #    }
+    #out <- optim(start[i,], obj1, gr=grad1, method="L-BFGS-B", lower=0, upper=1, gpi=gpi, fmin=fmin, noise=noise, ...)
+    #x <- c(1,0,1,1,0,0,0,0,0,0)
+    #return(-deriv_crit_EI(x, gpi, cst = fmin))
+    ### DB
         xnew[i,] <- c(out$par, -out$value)
     }
     solns <- data.frame(cbind(start, xnew))
@@ -196,6 +222,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
                 obj <- function(x, fmin, gpi, noise) - EI(gpi, x, fmin, predGPsep, noise)
                 check <- function(gpi, x, fmin, noise, tol) { EI(gpi, x, fmin, predGPsep, noise) <= tol }
                 tol <- eps
+                grad <- NULL
             } else {
                 stop("Only EI implemented with lagp")
             }
@@ -203,11 +230,19 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
             print("using hetGP")
             if (criteria=='EI') {
                 obj <- function(x, fmin, gpi, noise) {
-                    if (noise) stop("Noisey EI not implemented for hetGP.")
-                    crit_EI(x, gpi, cst = fmin)
+                    if (noise) {stop("Noisey EI not implemented for hetGP.")}
+                    return(-crit_EI(x, gpi, cst = fmin))
                 }
                 check <- function(gpi, x, fmin, noise, tol) {
-                    obj(x, fmin, gpi, noise) <= tol
+                    abs(obj(x, fmin, gpi, noise)) <= tol
+                }
+                grad <- function(x, fmin, gpi, noise) {
+                    if (noise) {stop("Noisey EI not implemented for hetGP.")}
+                    ret <- -deriv_crit_EI(x, gpi, cst = fmin)
+                    if (any(!is.finite(ret))) {
+                        ret <- numDeriv::grad(func=obj, x=x, fmin=fmin, gpi = gpi, noise = noise)
+                    }
+                    return(ret)
                 }
                 tol <- eps
             } else {
@@ -256,10 +291,10 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
 
             ## slight variations on calls for the different criteria
             if(criteria == "EI" && cands != "opt") solns <- EI.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
-            else if(criteria == "EY" && cands != "opt") solns <- EY.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
-            else if(criteria == "PI" && cands != "opt") solns <- PI.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
-            else if(criteria == "IECI") solns <- optim.crit(X, y, gpi, obj, check, ym, noise, Xref=randomLHS(100, m), tol=tol)
-            else if(criteria != "TS") solns <- optim.crit(X, y, gpi, obj, check, ym, noise, tol=tol)
+            #else if(criteria == "EY" && cands != "opt") solns <- EY.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
+            #else if(criteria == "PI" && cands != "opt") solns <- PI.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
+            #else if(criteria == "IECI") solns <- optim.crit(X, y, gpi, obj, check, ym, noise, Xref=randomLHS(100, m), tol=tol)
+            else if(criteria != "TS") solns <- optim.crit(X, y, gpi, obj, check, ym, grad, noise, tol=tol)
             else solns <- thompson.samp(gpi, X, y, noise, ncands=ncands, close=close)
 
             Xc <- solns[,1:ncol(X)]

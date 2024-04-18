@@ -3,13 +3,15 @@ tt <- Sys.time()
 args <- commandArgs(trailingOnly=TRUE)
 #func <- 'pomp10'
 #func <- 'ackley10'
-#seed <- 2
-func <- args[1]
-seed <- args[2]
+func <- 'ackley2'
+seed <- 1
 set.seed(seed)
 
 source("R/sim_settings.R")
 source("R/optim.R")
+
+#end <- 400
+end <- 100
 
 print("Seed:")
 print(seed)
@@ -47,13 +49,13 @@ write.csv(X, file = paste('./sim_inits/',func,'_',seed,'.csv',sep=''))
 # Dacca current opt: 8.229755
 
 times <- c()
-for (comp in competitors) {
-  tt <- Sys.time()
-  csplit <- strsplit(comp,"\\.")[[1]]
-  sur <- csplit[1]
+ret <- list()
+for (comp in c("hgp.ei.opt", "gp.ei.opt")) {
+    tt <- Sys.time()
+    csplit <- strsplit(comp,"\\.")[[1]]
+    sur <- csplit[1]
 
-  ## Surrogate based methods
-  if (sur%in% c('gp','hgp')) {
+    ## Surrogate based methods
     acq <- csplit[2]
     os <- csplit[3]
 
@@ -102,42 +104,17 @@ for (comp in competitors) {
       stopifnot(!isvor)
     }
 
-    os <- do.call(optim.surr, options)
+    #options$pack <- 'lagp'
+    #options$pack <- 'hetGP'
 
-    prog[[comp]] <- bov(os$y)
-    crits[[comp]] <- os$crits
-    opt[[comp]] <- os$X[which.min(os$y),]
-    cntl[[comp]] <- cntl[[comp]] + os$cnt
-
-  } else { ## Baseline methods
-    if (comp=='bfgs') {
-      ## try is necessary because optim with L-BFGS-B occasionally fails to start
-      for(i in 1:ninit) {
-        y <- c()
-        to <- try(os <- optim(X[i,], f.prime, lower=0, upper=1, method="L-BFGS-B"), silent=TRUE)
-        if(class(to) == "try-error") next;
-        prog[[comp]] <- bov(y, end)
-        break;
-      }
-    } else if (comp=='nm') {
-      y <- c()
-      os <- optim(X[1,], f.prime)
-      prog[[comp]] <- bov(y, end)
-    } else {
-      stop(paste("Unknown competitor",comp))
-    }
-  }
-  #times[comp] <- Sys.time() - tt
-  times[comp] <- difftime(Sys.time(), tt, units='secs')
+    ret[[comp]] <- do.call(optim.surr, options)
+    times[comp] <- Sys.time() - tt
 }
 
-pdf <- data.frame(prog)
-write.csv(pdf, paste(sim_path,func,'_',seed,'.csv',sep=''))
+pdf("temp.pdf")
+plot(NA,NA,xlim=c(0,end), ylim = c(0,22))
+for (comp in competitors) {
+    points(ret[[comp]]$y, col = cols[[comp]])
+}
+dev.off()
 
-tdf <- data.frame(times)
-write.csv(tdf, paste(time_path,func,'_',seed,'.csv',sep=''))
-
-cdf <- data.frame(crits)
-write.csv(cdf, paste(crits_path,func,'_',seed,'.csv',sep=''))
-
-#warnings()
