@@ -126,23 +126,23 @@ crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 # 'bfgs' - BFGS + finite differencing
 # 'nm' - Nelder-Meade Simplex
 if (test) {
-  #competitors <- c(
-  #  "gp.ei.opt",
-  #  "gp.ei.voriRAS"
-  #)
-  competitors <- c('gp.ei.opt','hgp.ei.opt')
+  competitors <- c(
+    "gp.ei.opt",
+    "gp.ei.voriRAS"
+  )
+  #competitors <- c('gp.ei.opt','hgp.ei.opt')
 } else {
-  #competitors <- c(
-  #  "nm",
-  #  "bfgs",
-  #  "gp.ei.opt",
-  #  "gp.ei.lhs",
-  #  #"gp.ei.corner",
-  #  "gp.ei.voriRIS",
-  #  "gp.ei.voriRLS",
-  #  "gp.ei.voriRAS"
-  #)
-  competitors <- c('gp.ei.opt','hgp.ei.opt')
+  competitors <- c(
+    "nm",
+    "bfgs",
+    "gp.ei.opt",
+    "gp.ei.lhs",
+    #"gp.ei.corner",
+    "gp.ei.voriRIS",
+    "gp.ei.voriRLS",
+    "gp.ei.voriRAS"
+  )
+  #competitors <- c('gp.ei.opt','hgp.ei.opt')
 }
 
 if (func=='rover') {
