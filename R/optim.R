@@ -69,7 +69,7 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
 ## 
 ## new EI fucntion that evaluates EI on triangulated 
 ## gap-filling candidates
-EI.cands <- function(X, y, ym, gpi, pack, ncands=100*ncol(X),
+EI.cands <- function(X, y, ym, gpi, pack='lagp', ncands=100*ncol(X),
                      cands='tri', noise=FALSE, pred=predGPsep, cand_params = cand_params)
 {
     m <- which.min(ym)
@@ -79,6 +79,8 @@ EI.cands <- function(X, y, ym, gpi, pack, ncands=100*ncol(X),
         solns <- data.frame(Xcand, Xcand, EI(gpi, Xcand, fmin, pred=pred, noise=noise))
     } else if (pack=='hetGP') {
         solns <- data.frame(Xcand, Xcand, crit_EI(Xcand, gpi, cst = fmin))
+    } else {
+        stop(paste("Unknown pack:", pack))
     }
     names(solns) <- c(paste0("s", 1:ncol(X)), paste0("x", 1:ncol(X)), "val") 
     return(solns)
@@ -290,7 +292,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
             } else ym <- y
 
             ## slight variations on calls for the different criteria
-            if(criteria == "EI" && cands != "opt") solns <- EI.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
+            if(criteria == "EI" && cands != "opt") solns <- EI.cands(X, y, ym, gpi, noise=noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "EY" && cands != "opt") solns <- EY.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "PI" && cands != "opt") solns <- PI.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "IECI") solns <- optim.crit(X, y, gpi, obj, check, ym, noise, Xref=randomLHS(100, m), tol=tol)
