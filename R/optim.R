@@ -6,6 +6,11 @@ library(stringr)
 library(hetGP)
 library(akima)
 
+#L_TR <<- 0.8
+L_TR <<- 1.6 # expect to "fail" on first eval.
+nsucc <<- 0
+nfail <<- 0
+
 ##
 ## begin laGP helper functions
 ##
@@ -29,7 +34,7 @@ EI <- function(gpi, x, fmin, pred=predGPsep, noise=FALSE)
 }
 
 
-get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL) {
+get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL, ninit = NULL) {
     if(substr(cands,1,3)=='tri') {
         Xcand <- tricands(X, max=ncands, best=m)
     } else if (substr(cands,1,3)=='vor') {
@@ -92,6 +97,72 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
         Xcand <- Xcand[!duplicated(Xcand),]
     } else if (cands=='lhs') {
         Xcand <- randomLHS(ncands, ncol(X))
+    } else if (cands=='tr') {
+        tau_succ <- 3 # If we succeed this many times in a row, double size of region.
+        tau_fail <- pmax(10,ncol(X)) # After this many failurs, halve interval.
+
+        isfirst <- length(y)!=ninit # Not on first init
+
+        Lmin <- 2^-7
+        Lmax <- 1.6
+
+        if (!isfirst && y[length(y)]==min(y)) {
+            nsucc <<- nsucc + 1
+            nfail <<- 0
+        } else {
+            nsucc <- 0
+            nfail <<- nfail + 1
+        }
+
+        if (nsucc >= tau_succ) {
+            print("Grow!")
+            L_TR <<- pmin(L_TR*2,Lmax)
+        } else if (nfail >= tau_fail) {
+            print("Shrinking!")
+            L_TR <<- pmax(L_TR/2,Lmin)
+        } else {
+            print("Staying put!")
+        }
+
+        #if (length(y)>ninit) {
+        #    ya <- y[(ninit+1):length(y)]
+        #    amin <- pmax(1,which.min(y)-ninit)
+        #} else {
+        #    ya <- c()
+        #    amin <- 0
+        #}
+
+        ## Update size.
+        #cond1 <- length(ya)-amin <= tau_succ # best val is within tau_succ 
+        #cond2 <- all(diff(ya)[(length(ya)-tau_succ):(length(ya)-1)]<0) # monotonic decrease for last tau_succ iters.
+
+        #if (length(ya)-amin > tau_fail) {
+        #    print("Shrinking!")
+        #    L_TR <<- pmax(L_TR/2,Lmin)
+        #} else if (cond1 && cond2 && !isfirst) {
+        #    print("Growing!")
+        #    L_TR <<- pmin(L_TR*2,Lmax)
+        #} else {
+        #    print("Not doing anything rn.")
+        #}
+        #print(ya)
+
+        L <- L_TR
+
+        # LHS
+        xbest <- X[m,]
+        lbs <- pmax(0,xbest-L)
+        ubs <- pmin(1,xbest+L)
+        lhs <- randomLHS(ncands, ncol(X))
+        for (p in 1:ncol(X)) {
+            lhs[,p] <- lhs[,p]*(ubs[p]-lbs[p]) + lbs[p]
+        }
+
+        #pdf(paste("debug/tr",nrow(X),".pdf",sep=''))
+        #plot(lhs[,1],lhs[,2], xlim=c(0,1),ylim=c(0,1))
+        #points(X[nrow(X),1],X[nrow(X),2], col = 'red')
+        #dev.off()
+        Xcand <- lhs
     } else {
         stop("Unrecognized candidate name.")
     }
@@ -103,11 +174,11 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
 ## new EI fucntion that evaluates EI on triangulated 
 ## gap-filling candidates
 EI.cands <- function(X, y, ym, gpi, pack='lagp', ncands=100*ncol(X),
-                     cands='tri', noise=FALSE, pred=predGPsep, cand_params = cand_params)
+                     cands='tri', noise=FALSE, pred=predGPsep, cand_params = cand_params, ninit = NULL)
 {
     m <- which.min(ym)
     fmin <- ym[m]
-    Xcand <- get_cands(X=X, m=m, ncands=ncands, cands=cands, cand_params = cand_params, y = y)
+    Xcand <- get_cands(X=X, m=m, ncands=ncands, cands=cands, cand_params = cand_params, y = y, ninit = ninit)
     if (pack=='lagp') {
         solns <- data.frame(Xcand, Xcand, EI(gpi, Xcand, fmin, pred=pred, noise=noise))
     } else if (pack=='hetGP') {
@@ -325,7 +396,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
             } else ym <- y
 
             ## slight variations on calls for the different criteria
-            if(criteria == "EI" && cands != "opt") solns <- EI.cands(X, y, ym, gpi, pack=pack, noise=noise, ncands=ncands, cands=cands, cand_params=cand_params) 
+            if(criteria == "EI" && cands != "opt") solns <- EI.cands(X, y, ym, gpi, pack=pack, noise=noise, ncands=ncands, cands=cands, cand_params=cand_params, ninit = ninit) 
             #else if(criteria == "EY" && cands != "opt") solns <- EY.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "PI" && cands != "opt") solns <- PI.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "IECI") solns <- optim.crit(X, y, gpi, obj, check, ym, noise, Xref=randomLHS(100, m), tol=tol)

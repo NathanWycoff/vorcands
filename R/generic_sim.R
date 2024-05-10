@@ -55,9 +55,9 @@ for (comp in competitors) {
   ## Surrogate based methods
   if (sur%in% c('gp','hgp')) {
     acq <- csplit[2]
-    os <- csplit[3]
+    ot <- csplit[3]
 
-    options <- list(sur=sur, f=f, ninit=ninit, m=m, end=end, X=X, criteria=toupper(acq), ncands=ncands, cands=os, ssm = 25)
+    options <- list(sur=sur, f=f, ninit=ninit, m=m, end=end, X=X, criteria=toupper(acq), ncands=ncands, cands=ot, ssm = 25)
     print(sur)
     if (sur=='hgp') {
         options$pack <- 'hetGP'
@@ -66,28 +66,28 @@ for (comp in competitors) {
     } else {print(sur);stop("Unknown sur")}
 
     options$cand_params <- list()
-    if (substr(os,1,3)=='vor') {
-      if (grepl('1',os,fixed=TRUE)) {
+    if (substr(ot,1,3)=='vor') {
+      if (grepl('1',ot,fixed=TRUE)) {
         options$cand_params$vor_norm = 'l1'
-      } else if (grepl('2',os,fixed=TRUE)) {
+      } else if (grepl('2',ot,fixed=TRUE)) {
         options$cand_params$vor_norm = 'l2'
-      } else if (grepl('i',os,fixed=TRUE)) {
+      } else if (grepl('i',ot,fixed=TRUE)) {
         options$cand_params$vor_norm = 'linf'
       } else {
         stop(paste("Unknown norm."))
       }
-      #if (grepl('R',os,fixed=TRUE)) {
+      #if (grepl('R',ot,fixed=TRUE)) {
       #  options$cand_params$vor_st = 'rect'
-      #} else if (grepl('U',os,fixed=TRUE)) {
+      #} else if (grepl('U',ot,fixed=TRUE)) {
       #  options$cand_params$vor_st = 'unif'
       #} else {
       #  stop("Unknown st.")
       #}
-      #if (grepl("IS",os,fixed=TRUE)) {
+      #if (grepl("IS",ot,fixed=TRUE)) {
       #  options$cand_params$style <- 'rect'
-      #} else if (grepl("LS",os,fixed=TRUE)) {
+      #} else if (grepl("LS",ot,fixed=TRUE)) {
       #  options$cand_params$style <- 'lhs'
-      #} else if (grepl("AS",os,fixed=TRUE)) {
+      #} else if (grepl("AS",ot,fixed=TRUE)) {
       #  options$cand_params$style <- 'alt'
       #} else {
       #  stop("Unknown style.")
@@ -96,9 +96,9 @@ for (comp in competitors) {
 
     # Method specific settings
     if (acq=='ts') {
-      istri <- os=='tri'
+      istri <- ot=='tri'
       if (istri) options$close <- -1
-      isvor <- os=='vor'
+      isvor <- ot=='vor'
       stopifnot(!isvor)
     }
 

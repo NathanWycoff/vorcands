@@ -128,7 +128,7 @@ crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 #               'gp.ei.voralt1',
 #               'gp.ei.voralt2')
 
-competitors <- c('gp.ei.voralti','gp.ei.lhs','gp.ei.tri')
+competitors <- c('gp.ei.voralti','gp.ei.lhs','gp.ei.tri', 'gp.ei.tr')
 
 #competitors <- c('gp.ei.vorsmRi',
 #               'gp.ei.vorsmUi',
