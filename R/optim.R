@@ -32,21 +32,58 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
     if(substr(cands,1,3)=='tri') {
         Xcand <- tricands(X, max=ncands, best=m, cand_params=cand_params)
     } else if (substr(cands,1,3)=='vor') {
-
-        if (cand_params$style=='rect' || (cand_params$style=='alt' && nrow(X) %% 2 == 0)) {
-            Xcand <- vorwalkcands(X, ncands, y=y, st = cand_params$vor_st, norm = cand_params$vor_norm, half2bound = T)$Xs
-            rownames(Xcand) <- paste('rect.',rownames(Xcand),sep='')
-        } else if (cand_params$style=='lhs' || (cand_params$style=='alt' && nrow(X) %% 2 == 1)) {
-            #Xcand <- vorwalkcands(X, ncands, y=y, st = 'lhs', norm = 'l2', half2bound = T)$Xs
-            if (nrow(X)==100) {
-                print("Using norm for both LHS and Rect.")
-                print(cand_params$vor_st)
+        if (substr(cands,4,4+2)=='smR') {
+            print('smR')
+            ncandso2 <- round(ncands/2)
+            Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'rect', norm = cand_params$vor_norm, half2bound = T)$Xs
+            rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
+            Xcand_lhs <- vorwalkcands(X, ncandso2, y=y, st = 'lhs', norm = cand_params$vor_norm, half2bound = T)$Xs
+            rownames(Xcand_lhs) <- paste('lhs.',rownames(Xcand_lhs),sep='')
+            Xcand <- rbind(Xcand_rect, Xcand_lhs)
+        } else if (substr(cands,4,4+2)=='smU') {
+            print('smU')
+            ncandso2 <- round(ncands/2)
+            Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'unif', norm = cand_params$vor_norm, half2bound = T)$Xs
+            rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
+            Xcand_lhs <- vorwalkcands(X, ncandso2, y=y, st = 'lhs', norm = cand_params$vor_norm, half2bound = T)$Xs
+            rownames(Xcand_lhs) <- paste('lhs.',rownames(Xcand_lhs),sep='')
+            Xcand <- rbind(Xcand_rect, Xcand_lhs)
+        } else if (substr(cands,4,4+3)=='smRU') {
+            print('smRU')
+            ncandso2 <- round(ncands/2)
+            Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'unif', norm = cand_params$vor_norm, half2bound = T)$Xs
+            rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
+            Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'rect', norm = cand_params$vor_norm, half2bound = T)$Xs
+            rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
+            Xcand <- rbind(Xcand_rect, Xcand_rect)
+        } else if (substr(cands,4,4)=='U') {
+            print('U')
+            Xcand <- vorwalkcands(X, ncands, y=y, st = 'unif', norm = cand_params$vor_norm, half2bound = T)$Xs
+        } else if (substr(cands,4,4+2)=='alt') {
+            print('alt')
+            if (nrow(X) %% 2 == 0) {
+                Xcand <- vorwalkcands(X, ncands, y=y, st = 'rect', norm = cand_params$vor_norm, half2bound = T)$Xs
+            } else {
+                Xcand <- vorwalkcands(X, ncands, y=y, st = 'lhs', norm = cand_params$vor_norm, half2bound = T)$Xs
             }
-            Xcand <- vorwalkcands(X, ncands, y=y, st = 'lhs', norm = cand_params$vor_norm, half2bound = T)$Xs
-            rownames(Xcand) <- paste('lhs.',rownames(Xcand),sep='')
         } else {
-            stop("Unrecognized candidate style.")
+            stop(paste("Unknown vorcands:",cands))
         }
+
+        #if (cand_params$style=='rect' || (cand_params$style=='alt' && nrow(X) %% 2 == 0)) {
+        #    Xcand <- vorwalkcands(X, ncands, y=y, st = cand_params$vor_st, norm = cand_params$vor_norm, half2bound = T)$Xs
+        #    rownames(Xcand) <- paste('rect.',rownames(Xcand),sep='')
+        #} else if (cand_params$style=='lhs' || (cand_params$style=='alt' && nrow(X) %% 2 == 1)) {
+        #    #Xcand <- vorwalkcands(X, ncands, y=y, st = 'lhs', norm = 'l2', half2bound = T)$Xs
+        #    if (nrow(X)==100) {
+        #        print("Using norm for both LHS and Rect.")
+        #        print(cand_params$vor_st)
+        #    }
+        #    Xcand <- vorwalkcands(X, ncands, y=y, st = 'lhs', norm = cand_params$vor_norm, half2bound = T)$Xs
+        #    rownames(Xcand) <- paste('lhs.',rownames(Xcand),sep='')
+        #} else {
+        #    stop("Unrecognized candidate style.")
+        #}
 
     } else if (cands=='hitri') {
 
@@ -292,7 +329,7 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
             } else ym <- y
 
             ## slight variations on calls for the different criteria
-            if(criteria == "EI" && cands != "opt") solns <- EI.cands(X, y, ym, gpi, noise=noise, ncands=ncands, cands=cands, cand_params=cand_params) 
+            if(criteria == "EI" && cands != "opt") solns <- EI.cands(X, y, ym, gpi, pack=pack, noise=noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "EY" && cands != "opt") solns <- EY.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "PI" && cands != "opt") solns <- PI.cands(X, y, ym, gpi, noise, ncands=ncands, cands=cands, cand_params=cand_params) 
             #else if(criteria == "IECI") solns <- optim.crit(X, y, gpi, obj, check, ym, noise, Xref=randomLHS(100, m), tol=tol)
@@ -306,6 +343,8 @@ optim.surr <- function(f, ninit, m, end, X=NULL, sur = 'gp',
             #print(paste("Max ei is:", max(solns$val)))
             camefrom <- as.numeric(sapply(strsplit(substr(str_extract(rownames(Xc), "X[0-9]+\\.*"), 2, 10000L),'\\.'), function(x) x[[1]]))
             cf <- camefrom[wm]
+            #print("I selected:")
+            #print(rownames(Xc)[wmoq])
 
             xnew <- as.matrix(solns[wm,(ncol(X)+1):(2*ncol(X))])
             ynew_raw <- f(xnew)

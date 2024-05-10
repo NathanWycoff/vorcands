@@ -12,9 +12,9 @@ if (!exists('func')) stop("Need to define func before calling sim_settings.R")
 if (test) {
   reps <- 2
 } else {
-  #reps <- 90
-  print("Only 30 reps!")
-  reps <- 30
+  reps <- 90
+  print("Only 20 reps!")
+  reps <- 20
 }
 #end <- 250
 
@@ -111,39 +111,44 @@ time_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_time/',sep='')
 crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 #opt_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_opt/',sep='')
 
-# Prefix:
-# 'pi' - Probability of Improvement.
-# 'ei' - Expected Improvement.
-# 'ts' - Thompson Sampling.
+#competitors <- c('gp.ei.vorsmRi',
+#               'gp.ei.vorsmR1',
+#               'gp.ei.vorsmR2',
+#               'gp.ei.vorsmUi',
+#               'gp.ei.vorsmU1',
+#               'gp.ei.vorsmU2',
+#               'gp.ei.vorsmRUi',
+#               'gp.ei.vorsmRU1',
+#               'gp.ei.vorsmRU2',
+#               'gp.ei.vorUi',
+#               'gp.ei.vorU1',
+#               'gp.ei.vorU2',
+#               'gp.ei.voralti',
+#               'gp.ei.voralt1',
+#               'gp.ei.voralt2')
 
-# Suffix:
-# 's' - BFGS optim
-# 't' - Tricands
-# 'l' - LocoCands
-# 'r' - LHS cands
-#
-# "Traditional" methods:
-# 'bfgs' - BFGS + finite differencing
-# 'nm' - Nelder-Meade Simplex
-if (test) {
-  competitors <- c(
-    "gp.ei.opt",
-    "gp.ei.voriRAS"
-  )
-  #competitors <- c('gp.ei.opt','hgp.ei.opt')
-} else {
-  competitors <- c(
-    "nm",
-    "bfgs",
-    "gp.ei.opt",
-    "gp.ei.lhs",
-    #"gp.ei.corner",
-    "gp.ei.voriRIS",
-    "gp.ei.voriRLS",
-    "gp.ei.voriRAS"
-  )
-  #competitors <- c('gp.ei.opt','hgp.ei.opt')
-}
+competitors <- c('gp.ei.voralti','gp.ei.lhs')
+
+#competitors <- c('gp.ei.vorsmRi',
+#               'gp.ei.vorsmUi',
+#               'gp.ei.vorsmRUi',
+#               'gp.ei.vorUi',
+#               'gp.ei.voralti')
+
+#competitors <- c('gp.ei.vorsmR1',
+#               'gp.ei.vorsmU1',
+#               'gp.ei.vorsmRU1',
+#               'gp.ei.vorU1',
+#               'gp.ei.voralt1')
+
+#competitors <- c('gp.ei.vorsmR2',
+#               'gp.ei.vorsmU2',
+#               'gp.ei.vorsmRU2',
+#               'gp.ei.vorU2',
+#               'gp.ei.voralt2')
+
+
+
 
 if (func=='rover') {
     competitors <- competitors[competitors!='bfgs']
@@ -184,72 +189,14 @@ pretty_sim_names <- list(
   dacca = 'Dacca Cholera Simulator (P=24)'
 )
 
-#competitors <- c(
-#                'gp.ei.voriRAS',
-#                'gp.ei.vor1RAS',
-#                'gp.ei.vor2RAS'
-#                )
+ltys <- sapply(competitors, function(comp) 1)
+cols <- sapply(1:length(competitors), function(i) rainbow(length(competitors))[i])
 
-ltys <- sapply(competitors, function(comp) {
+names(cols) <- competitors
+names(ltys) <- competitors
+short_comp <- sapply(competitors, function(comp) {
     csplit <- strsplit(comp,"\\.")[[1]]
-    acq <- csplit[2]
     os <- csplit[3]
-
-    if (comp %in% c("bfgs","nm")) {
-        return(1)
-    } else if (acq=='ei') {
-      if (substr(os,1,3)=='vor') {
-        return(2)
-      } else {
-        return(1)
-      }
-    } else {
-      return(1)
-        }
-    #} else if (acq=='ts') {
-    #    return(3)
-    #} else if (acq=='pi') {
-    #    return(4)
-    #}
- })
- cols <- sapply(competitors, function(comp) {
-    csplit <- strsplit(comp,"\\.")[[1]]
-    acq <- csplit[2]
-    os <- csplit[3]
-
-    if (comp == "bfgs") {
-        return('black')
-    } else if (comp=="nm") {
-        return("gray")
-    } else if (os=='opt') {
-        if (csplit[1]=='gp') {
-            return('blue')
-        } else {
-            return('purple')
-        }
-    #} else if (os=='tri') {
-    #    return('green')
-    #} else if (substr(os,1,4)=='loco') {
-    } else if (substr(os,1,3)=='tri') {
-        args <- substr(os,4,nchar(os))
-        if (args=='BS') return('red')
-        if (args=='BL') return('purple')
-    } else if (os=='lhs') {
-        return('cyan')
-    } else if (substr(os,1,3)=='vor') {
-      args <- substr(os,4,nchar(os))
-      #if (args=='1U') return('yellow')
-      #if (args=='1R') return('orange')
-      #if (args=='2U') return('gray')
-      #if (args=='2R') return('blue')
-      #if (args=='iU') return('green')
-      if (args=='iRAS') return('red')
-      if (args=='iRLS') return('pink')
-      if (args=='iRIS') return('green')
-      if (args=='1RAS') return('orange')
-      if (args=='2RAS') return('green')
-      if (grepl("fast",os,fixed=TRUE)) return('orange')
-    } else if (os=='corner') {
-      return('orange')
-    }
- })
+    return(os)
+})
+print(short_comp)

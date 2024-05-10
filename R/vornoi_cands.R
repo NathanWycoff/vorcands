@@ -120,7 +120,7 @@ get_nn <- function(X1, X2, K, norm = 'l2') {
         #neigh$nn.idx <- matrix(apply(D, 2, which.min), ncol = 1)
         #neigh$nn.dists <- matrix(apply(D, 2, min), ncol = 1)
     } else {
-        stop("Unknown norm")
+        stop(paste("Unknown norm:",norm))
     }
     return(neigh)
 }

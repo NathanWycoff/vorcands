@@ -74,24 +74,24 @@ for (comp in competitors) {
       } else if (grepl('i',os,fixed=TRUE)) {
         options$cand_params$vor_norm = 'linf'
       } else {
-        stop("Unknown norm.")
+        stop(paste("Unknown norm."))
       }
-      if (grepl('R',os,fixed=TRUE)) {
-        options$cand_params$vor_st = 'rect'
-      } else if (grepl('U',os,fixed=TRUE)) {
-        options$cand_params$vor_st = 'unif'
-      } else {
-        stop("Unknown st.")
-      }
-      if (grepl("IS",os,fixed=TRUE)) {
-        options$cand_params$style <- 'rect'
-      } else if (grepl("LS",os,fixed=TRUE)) {
-        options$cand_params$style <- 'lhs'
-      } else if (grepl("AS",os,fixed=TRUE)) {
-        options$cand_params$style <- 'alt'
-      } else {
-        stop("Unknown style.")
-      }
+      #if (grepl('R',os,fixed=TRUE)) {
+      #  options$cand_params$vor_st = 'rect'
+      #} else if (grepl('U',os,fixed=TRUE)) {
+      #  options$cand_params$vor_st = 'unif'
+      #} else {
+      #  stop("Unknown st.")
+      #}
+      #if (grepl("IS",os,fixed=TRUE)) {
+      #  options$cand_params$style <- 'rect'
+      #} else if (grepl("LS",os,fixed=TRUE)) {
+      #  options$cand_params$style <- 'lhs'
+      #} else if (grepl("AS",os,fixed=TRUE)) {
+      #  options$cand_params$style <- 'alt'
+      #} else {
+      #  stop("Unknown style.")
+      #}
     }
 
     # Method specific settings

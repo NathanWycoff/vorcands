@@ -9,7 +9,7 @@ if ('gp.ei.corner' %in% competitors) {
 }
 
 #pretty_comp <- sapply(competitors, function(x) pretty_method_names[[x]])
-short_comp <- sapply(competitors, function(x) short_method_names[[x]])
+#short_comp <- sapply(competitors, function(x) short_method_names[[x]])
 
 ### Progress
 files <- list.files(sim_path, full.names = TRUE)
@@ -114,7 +114,8 @@ for (comp in competitors) {
 #legend('bottomleft', legend = competitors, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5)
 dev.off()
 
-pdf("legend.pdf", width = 6, height = 2)
+#pdf("legend.pdf", width = 6, height = 2)
+pdf("legend.pdf", width = 6, height = 4)
 
 plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
 #legend('bottomleft', legend = pretty_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5, ncol = 4)
