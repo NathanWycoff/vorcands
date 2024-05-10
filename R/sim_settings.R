@@ -99,7 +99,8 @@ if (test) {
 }
 
 #ninit <- 100
-#end <- 101
+print("Small sim!")
+end <- 100
 #reps <- 4
 
 ncands <- min(5000,100*m)
@@ -127,7 +128,7 @@ crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 #               'gp.ei.voralt1',
 #               'gp.ei.voralt2')
 
-competitors <- c('gp.ei.voralti','gp.ei.lhs')
+competitors <- c('gp.ei.voralti','gp.ei.lhs','gp.ei.tri')
 
 #competitors <- c('gp.ei.vorsmRi',
 #               'gp.ei.vorsmUi',
@@ -146,8 +147,6 @@ competitors <- c('gp.ei.voralti','gp.ei.lhs')
 #               'gp.ei.vorsmRU2',
 #               'gp.ei.vorU2',
 #               'gp.ei.voralt2')
-
-
 
 
 if (func=='rover') {
@@ -170,12 +169,9 @@ short_method_names <- list(
   nm = 'NM',
   bfgs = 'BFGS',
   gp.ei.opt = 'GP-Opt',
-  hgp.ei.opt = 'hetGP-Opt',
   gp.ei.lhs = 'GP-LHS',
-  gp.ei.corner = 'GP-Corner',
-  gp.ei.voriRIS = 'GP-VWalk',
-  gp.ei.voriRLS = 'GP-VProj',
-  gp.ei.voriRAS = 'GP-VAlt'
+  gp.ei.voralti = 'GP-Vor',
+  gp.ei.tri = 'GP-Tri'
 )
 
 pretty_sim_names <- list(

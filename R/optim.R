@@ -1,6 +1,7 @@
 #source("R/vorlhs.R")
 #source("R/vornoi_fun.R")
 source("R/vornoi_cands.R")
+source("tricands/R/tricands.R")
 library(stringr)
 library(hetGP)
 library(akima)
@@ -30,10 +31,9 @@ EI <- function(gpi, x, fmin, pred=predGPsep, noise=FALSE)
 
 get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL) {
     if(substr(cands,1,3)=='tri') {
-        Xcand <- tricands(X, max=ncands, best=m, cand_params=cand_params)
+        Xcand <- tricands(X, max=ncands, best=m)
     } else if (substr(cands,1,3)=='vor') {
         if (substr(cands,4,4+2)=='smR') {
-            print('smR')
             ncandso2 <- round(ncands/2)
             Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'rect', norm = cand_params$vor_norm, half2bound = T)$Xs
             rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
@@ -41,7 +41,6 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
             rownames(Xcand_lhs) <- paste('lhs.',rownames(Xcand_lhs),sep='')
             Xcand <- rbind(Xcand_rect, Xcand_lhs)
         } else if (substr(cands,4,4+2)=='smU') {
-            print('smU')
             ncandso2 <- round(ncands/2)
             Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'unif', norm = cand_params$vor_norm, half2bound = T)$Xs
             rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
@@ -49,7 +48,6 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
             rownames(Xcand_lhs) <- paste('lhs.',rownames(Xcand_lhs),sep='')
             Xcand <- rbind(Xcand_rect, Xcand_lhs)
         } else if (substr(cands,4,4+3)=='smRU') {
-            print('smRU')
             ncandso2 <- round(ncands/2)
             Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'unif', norm = cand_params$vor_norm, half2bound = T)$Xs
             rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
@@ -57,10 +55,8 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL)
             rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
             Xcand <- rbind(Xcand_rect, Xcand_rect)
         } else if (substr(cands,4,4)=='U') {
-            print('U')
             Xcand <- vorwalkcands(X, ncands, y=y, st = 'unif', norm = cand_params$vor_norm, half2bound = T)$Xs
         } else if (substr(cands,4,4+2)=='alt') {
-            print('alt')
             if (nrow(X) %% 2 == 0) {
                 Xcand <- vorwalkcands(X, ncands, y=y, st = 'rect', norm = cand_params$vor_norm, half2bound = T)$Xs
             } else {
