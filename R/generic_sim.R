@@ -46,8 +46,19 @@ write.csv(X, file = paste('./sim_inits/',func,'_',seed,'.csv',sep=''))
 
 # Dacca current opt: 8.229755
 
+options(error=recover)
+for (i in 1:100) {
+    print("Oh no")
+}
+#competitors <- 'gp.ei.voralti'
+#options(error=recover)
+#for (i in 1:100) {
+#    print("Oh no")
+#}
+
 times <- c()
 for (comp in competitors) {
+  print(comp)
   tt <- Sys.time()
   csplit <- strsplit(comp,"\\.")[[1]]
   sur <- csplit[1]
@@ -58,7 +69,7 @@ for (comp in competitors) {
     ot <- csplit[3]
 
     options <- list(sur=sur, f=f, ninit=ninit, m=m, end=end, X=X, criteria=toupper(acq), ncands=ncands, cands=ot, ssm = 25)
-    print(sur)
+    #print(sur)
     if (sur=='hgp') {
         options$pack <- 'hetGP'
     } else if (sur=='gp') {
@@ -102,8 +113,17 @@ for (comp in competitors) {
       stopifnot(!isvor)
     }
 
-    os <- do.call(optim.surr, options)
+    if (ot=='tri') {
+        if (m >= 8) {
+            options$end <- 100
+        }
+        if (m>= 12) {
+            options$end <- 50
+        }
+    } 
 
+    os <- do.call(optim.surr, options)
+    
     prog[[comp]] <- bov(os$y)
     crits[[comp]] <- os$crits
     opt[[comp]] <- os$X[which.min(os$y),]
@@ -130,6 +150,9 @@ for (comp in competitors) {
   #times[comp] <- Sys.time() - tt
   times[comp] <- difftime(Sys.time(), tt, units='secs')
 }
+
+prog[['gp.ei.tri']] <- c(prog[['gp.ei.tri']], rep(NA, length(prog[[1]])-length(prog[['gp.ei.tri']])))
+crits[['gp.ei.tri']] <- c(crits[['gp.ei.tri']], rep(NA, length(crits[[1]])-length(crits[['gp.ei.tri']])))
 
 pdf <- data.frame(prog)
 write.csv(pdf, paste(sim_path,func,'_',seed,'.csv',sep=''))

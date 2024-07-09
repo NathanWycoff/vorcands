@@ -29,7 +29,8 @@ f.prime <- function(x)
 #X <- matrix(runif(ninit*m), ncol=m) ## 
 X <- randomLHS(ninit, m)
 
-comp <- 'gp.ei.tr'
+#comp <- 'gp.ei.tr'
+comp <- 'gp.ei.sobol'
 
 tt <- Sys.time()
 csplit <- strsplit(comp,"\\.")[[1]]

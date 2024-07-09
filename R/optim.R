@@ -97,6 +97,13 @@ get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL,
         Xcand <- Xcand[!duplicated(Xcand),]
     } else if (cands=='lhs') {
         Xcand <- randomLHS(ncands, ncol(X))
+    } else if (cands=='sobol') {
+        #Xcand <- randomLHS(ncands, ncol(X))
+        s <- ncol(X) # dimR
+        x <- 13
+        c <- 2^x
+        Xcand <- SobolSequence::sobolSequence.points(dimR=s, dimF2=x, count=c)
+        Xcand <- Xcand[sample(nrow(Xcand),ncands),]
     } else if (cands=='tr') {
         tau_succ <- 3 # If we succeed this many times in a row, double size of region.
         tau_fail <- pmax(10,ncol(X)) # After this many failurs, halve interval.

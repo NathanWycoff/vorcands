@@ -98,10 +98,10 @@ if (test) {
   end <- 2*ninit
 }
 
-#ninit <- 100
-print("Small sim!")
-end <- 100
-#reps <- 4
+##ninit <- 100
+#print("Small sim!")
+#end <- 100
+##reps <- 4
 
 ncands <- min(5000,100*m)
 
@@ -128,7 +128,12 @@ crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 #               'gp.ei.voralt1',
 #               'gp.ei.voralt2')
 
-competitors <- c('gp.ei.voralti','gp.ei.lhs','gp.ei.tri', 'gp.ei.tr')
+#print("Only sobol!!!")
+#competitors <- c('gp.ei.sobol')
+# NOTE: The first method should be somthing like nm, gp.ei.lhs or anything except for gp.ei.tri because I rely on this having the normal length later.
+competitors <- c('nm','bfgs','gp.ei.opt','gp.ei.lhs','gp.ei.sobol','gp.ei.tri', 'gp.ei.tr','gp.ei.voralti')
+#competitors <- c('gp.ei.voralti')
+#competitors <- c('gp.ei.tr')
 
 #competitors <- c('gp.ei.vorsmRi',
 #               'gp.ei.vorsmUi',
@@ -171,7 +176,8 @@ short_method_names <- list(
   gp.ei.opt = 'GP-Opt',
   gp.ei.lhs = 'GP-LHS',
   gp.ei.voralti = 'GP-Vor',
-  gp.ei.tri = 'GP-Tri'
+  gp.ei.tri = 'GP-Tri',
+  gp.ei.tr = 'GP-TR'
 )
 
 pretty_sim_names <- list(
@@ -191,6 +197,8 @@ cols <- sapply(1:length(competitors), function(i) rainbow(length(competitors))[i
 names(cols) <- competitors
 names(ltys) <- competitors
 short_comp <- sapply(competitors, function(comp) {
+    if (comp=='nm') return('nm')
+    if (comp=='bfgs') return('bfgs')
     csplit <- strsplit(comp,"\\.")[[1]]
     os <- csplit[3]
     return(os)
