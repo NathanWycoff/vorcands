@@ -48,7 +48,7 @@ Since the numerical experiments use functions written in Python, there are many 
 - After loading this venv (in the terminal: "source .venv/bin/activate"), install python packages:
     pip install pygame gym[box2d] botorch rpy2 matplotlib pandas
 - Install CRAN R packages 
-    install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","lhs","geometry"))
+    install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","lhs","geometry","SobolSequence"))
 
 ### Reproducing Illustrative Figures
 To reproduce the illustrative figures in the paper, simply run R files which begin with the string "figure", e.g. Rscript R/figure_1.R
