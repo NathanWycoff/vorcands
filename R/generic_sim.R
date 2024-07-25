@@ -47,9 +47,6 @@ write.csv(X, file = paste('./sim_inits/',func,'_',seed,'.csv',sep=''))
 # Dacca current opt: 8.229755
 
 options(error=recover)
-for (i in 1:100) {
-    print("Oh no")
-}
 
 #competitors <- 'gp.ei.voralti'
 #options(error=recover)
