@@ -4,15 +4,21 @@ args <- commandArgs(trailingOnly=TRUE)
 #func <- 'pomp10'
 #func <- 'ackley10'
 #seed <- 2
-func <- args[1]
-seed <- args[2]
+#func <- args[1]
+#seed <- args[2]
+ind <- args[1]
+
+
+source("R/parset.R")
+
+print("Func:")
+print(func)
+print("Seed:")
+print(seed)
 set.seed(seed)
 
 source("R/sim_settings.R")
 source("R/optim.R")
-
-print("Seed:")
-print(seed)
 
 ## Stuff to look closer at:
 #ncands <- max(50,100*m)

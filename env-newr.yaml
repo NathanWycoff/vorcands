@@ -1,0 +1,36 @@
+---
+name: nebs05
+channels:
+ - conda-forge 
+dependencies:
+ - python = 3.10
+ - r = 4
+ - r-stringr
+ - r-akima
+ - r-rcpp
+ - r-lhs
+ - r-tgp
+ - r-geometry
+ - r-reticulate
+ - r-knitr
+ - r-rmarkdown
+ - r-testthat
+ - r-tidyverse 
+ - r-nloptr 
+ - r-rcppeigen 
+ - r-subplex 
+ - r-desolve 
+ - r-mvtnorm 
+ - r-coda 
+ - r-randtoolbox
+ - r-dicedesign
+ - r-colorspace
+ - r-interp
+ - r-mass
+ - pygame 
+ - gym
+ - box2d-py 
+ - botorch 
+ - rpy2 
+ - matplotlib 
+ - pandas

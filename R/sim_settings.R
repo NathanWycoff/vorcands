@@ -1,22 +1,15 @@
 source("R/functions/function_lib.R")
 
-#test <- TRUE
-test <- FALSE
+test <- TRUE
+#test <- FALSE
 
 if (test) {
   print("TESTING ONLY!")
 }
 if (!exists('func')) stop("Need to define func before calling sim_settings.R")
 
-## Sim settings.
-if (test) {
-  reps <- 2
-} else {
-  reps <- 90
-  print("Only 20 reps!")
-  reps <- 20
-}
-#end <- 250
+
+problems <- c("ackley10","levy10","rosen10","lunar","push","rover","pomp10","dacca")
 
 if (func=='goldprice') {
   f <- goldprice
