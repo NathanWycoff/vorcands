@@ -151,6 +151,7 @@ if (func=='rover') {
     competitors <- competitors[competitors!='bfgs']
     competitors <- competitors[competitors!='gp.ei.opt']
     competitors <- competitors[competitors!='gp.ei.sobol']
+    competitors <- competitors[competitors!='gp.ei.tri']
 } 
 
 #pretty_method_names <- list(
