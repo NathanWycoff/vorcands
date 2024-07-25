@@ -150,6 +150,7 @@ competitors <- c('nm','bfgs','gp.ei.opt','gp.ei.lhs','gp.ei.sobol','gp.ei.tri', 
 if (func=='rover') {
     competitors <- competitors[competitors!='bfgs']
     competitors <- competitors[competitors!='gp.ei.opt']
+    competitors <- competitors[competitors!='gp.ei.sobol']
 } 
 
 #pretty_method_names <- list(

@@ -33,14 +33,16 @@ EI <- function(gpi, x, fmin, pred=predGPsep, noise=FALSE)
     return(ei)
 }
 
-
 get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL, ninit = NULL) {
     if(substr(cands,1,3)=='tri') {
-        Xcand <- tricands(X, max=ncands, best=m)
+        tt <- Sys.time()
+        #Xcand <- tricands(X, max=ncands, best=m)
+        Xcand <- tricands(X, max=1, best=m)
+        Sys.time() - tt
     } else if (substr(cands,1,3)=='vor') {
         if (substr(cands,4,4+2)=='smR') {
             ncandso2 <- round(ncands/2)
-            Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'rect', norm = cand_params$vor_norm, half2bound = T)$Xs
+           Xcand_rect <- vorwalkcands(X, ncandso2, y=y, st = 'rect', norm = cand_params$vor_norm, half2bound = T)$Xs
             rownames(Xcand_rect) <- paste('rect.',rownames(Xcand_rect),sep='')
             Xcand_lhs <- vorwalkcands(X, ncandso2, y=y, st = 'lhs', norm = cand_params$vor_norm, half2bound = T)$Xs
             rownames(Xcand_lhs) <- paste('lhs.',rownames(Xcand_lhs),sep='')

@@ -1,5 +1,6 @@
 start_big=`date +%s`
-for func in ackley10 levy10 rosen10 push rover pomp10log dacca lunar 
+#for func in ackley10 levy10 rosen10 push rover pomp10log dacca lunar 
+for func in ackley10 levy10 lunar rosen10 push rover pomp10log dacca
 do
     Rscript R/clean_dir_make_args.R $func
 done
