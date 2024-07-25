@@ -98,15 +98,15 @@ max_intervals <- Inf
 for (comp in competitors) {
   print(comp)
   print(cols[[comp]])
-  if (any(is.na(progs[[comp]]))) {
+  if (all(is.na(progs[[comp]]))) {
     print("Skipping nan competitor:")
     print(comp)
   } else {
     #points(1:end, rowMedians(progs[[comp]]), type = 'l', lty = ltys[comp], col = cols[comp], lwd = lwd)
-    points(1:end, apply(progs[[comp]], 1, function(x) median(x)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+    points(1:end, apply(progs[[comp]], 1, function(x) median(x, na.rm = T)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
     if (length(competitors) <= max_intervals) {
-      points(1:end, apply(progs[[comp]], 1, function(x) quantile(x, ql)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
-      points(1:end, apply(progs[[comp]], 1, function(x) quantile(x, qu)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+      points(1:end, apply(progs[[comp]], 1, function(x) quantile(x, ql, na.rm = T)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+      points(1:end, apply(progs[[comp]], 1, function(x) quantile(x, qu, na.rm = T)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
     }
   }
 }
@@ -137,7 +137,7 @@ mids <- do.call(c, lapply(progs, function(p) p[half,]))
 if (func=='rosen10') {
   mids <- log10(mids)
 }
-yl <- range(mids[!(labs %in% c('NM','BFGS'))])
+yl <- range(mids[!(labs %in% c('NM','BFGS'))], na.rm = T)
 boxplot(mids~labs, main = paste("Iteration",half), xlab = '', las = 2, ylab='', ylim = yl)
 #bp <- boxplot(mids~labs, main = paste("Iteration",half), xlab = '', las = 2, xaxt = "n")
 #tick <- seq_along(bp$names)
@@ -148,7 +148,7 @@ ends <- do.call(c, lapply(progs, function(p) p[end,]))
 if (func=='rosen10') {
   ends <- log10(ends)
 }
-yl <- range(ends[!(labs %in% c('NM','BFGS'))])
+yl <- range(ends[!(labs %in% c('NM','BFGS'))], na.rm = T)
 boxplot(ends~labs, main = paste("Iteration",end), xlab = '', las = 2, angle = 45, ylab='', ylim = yl)
 dev.off()
 

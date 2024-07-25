@@ -50,6 +50,7 @@ options(error=recover)
 for (i in 1:100) {
     print("Oh no")
 }
+
 #competitors <- 'gp.ei.voralti'
 #options(error=recover)
 #for (i in 1:100) {
@@ -116,9 +117,6 @@ for (comp in competitors) {
     if (ot=='tri') {
         if (m >= 8) {
             options$end <- 100
-        }
-        if (m>= 12) {
-            options$end <- 50
         }
     } 
 

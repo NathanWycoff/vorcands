@@ -13,8 +13,11 @@ if (test) {
   reps <- 2
 } else {
   reps <- 90
-  print("Only 20 reps!")
-  reps <- 20
+
+  #print("Only 20 reps!")
+  #reps <- 20
+  print("Only 2 reps!")
+  reps <- 2
 }
 #end <- 250
 
