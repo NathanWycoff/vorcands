@@ -5,8 +5,9 @@
 ## you're sweeping over can be mapped to / indexed by an integer.
 ##
 
-##SBATCH --account=group-rci
-#SBATCH --partition=unsafe
+
+#SBATCH --account=priority-johnwsmith
+#SBATCH --partition=priority
 ##SBATCH --partition=priority
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
@@ -19,7 +20,7 @@
 #SBATCH --error=%x-%A-%3a.err
 
 ## Array range doesn't have to start at 0.
-#SBATCH --array=0-800
+#SBATCH --array=0-800:100
 
 # Print out which node we are running on. Each job in an array might run on
 # a different node.
@@ -32,4 +33,5 @@ module load Mamba/23.1.0-4
 . ~/.bashrc
 mamba activate nebs05
 
+Rscript install_cran.R
 Rscript R/generic_sim.R $SLURM_ARRAY_TASK_ID

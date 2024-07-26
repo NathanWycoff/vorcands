@@ -9,7 +9,9 @@ tricands/*
 # vim files
 *.swo
 *.swp
-
+*.err
+*.out
+swaggy/*
 *.pdf
 *.png
 *.jpg
