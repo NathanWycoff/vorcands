@@ -49,6 +49,9 @@ Since the numerical experiments use functions written in Python, there are many 
     pip install pygame gym[box2d] botorch rpy2 matplotlib pandas
 - Install CRAN R packages 
     install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","lhs","geometry","SobolSequence"))
+- Clone the tricands repo:
+    git clone https://bitbucket.org/gramacylab/tricands.git
+
 
 ### Reproducing Illustrative Figures
 To reproduce the illustrative figures in the paper, simply run R files which begin with the string "figure", e.g. Rscript R/figure_1.R
