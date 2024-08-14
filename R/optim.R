@@ -36,8 +36,7 @@ EI <- function(gpi, x, fmin, pred=predGPsep, noise=FALSE)
 get_cands <- function(X, m, ncands, cands = 'lhs', cand_params = NULL, y = NULL, ninit = NULL) {
     if(substr(cands,1,3)=='tri') {
         tt <- Sys.time()
-        #Xcand <- tricands(X, max=ncands, best=m)
-        Xcand <- tricands(X, max=1, best=m)
+        Xcand <- tricands(X, max=ncands, best=m)
         Sys.time() - tt
     } else if (substr(cands,1,3)=='vor') {
         if (substr(cands,4,4+2)=='smR') {
