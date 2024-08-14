@@ -119,7 +119,7 @@ for (comp in competitors) {
 
     if (ot=='tri') {
         if (m >= 8) {
-            options$end <- 100
+            options$end <- pmin(100, options$end)
         }
     } 
 
@@ -156,12 +156,15 @@ prog[['gp.ei.tri']] <- c(prog[['gp.ei.tri']], rep(NA, length(prog[[1]])-length(p
 crits[['gp.ei.tri']] <- c(crits[['gp.ei.tri']], rep(NA, length(crits[[1]])-length(crits[['gp.ei.tri']])))
 
 pdf <- data.frame(prog)
+dir.create(sim_path, showWarnings = FALSE)
 write.csv(pdf, paste(sim_path,func,'_',seed,'.csv',sep=''))
 
 tdf <- data.frame(times)
+dir.create(time_path, showWarnings = FALSE)
 write.csv(tdf, paste(time_path,func,'_',seed,'.csv',sep=''))
 
 cdf <- data.frame(crits)
+dir.create(crits_path, showWarnings = FALSE)
 write.csv(cdf, paste(crits_path,func,'_',seed,'.csv',sep=''))
 
 #warnings()
