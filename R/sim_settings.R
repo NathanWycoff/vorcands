@@ -1,5 +1,7 @@
 source("R/functions/function_lib.R")
 
+library(RColorBrewer)
+
 #test <- TRUE
 test <- FALSE
 
@@ -125,7 +127,13 @@ crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 #competitors <- c('gp.ei.sobol')
 # NOTE: The first method should be somthing like nm, gp.ei.lhs or anything except for gp.ei.tri because I rely on this having the normal length later.
 #competitors <- c('nm','bfgs','gp.ei.opt','gp.ei.lhs','gp.ei.sobol','gp.ei.tri', 'gp.ei.tr','gp.ei.voralti')
+
 competitors <- c('nm','bfgs','gp.ei.opt','gp.ei.lhs','gp.ei.sobol','gp.ei.tri','gp.ei.voralti')
+cols <- sapply(1:length(competitors), function(i) brewer.pal(length(competitors), 'Dark2')[i])
+ltys <- sapply(competitors, function(comp) 1)
+names(cols) <- competitors
+names(ltys) <- competitors
+
 #competitors <- c('gp.ei.voralti')
 #competitors <- c('gp.ei.tr')
 
@@ -174,6 +182,7 @@ short_method_names <- list(
   bfgs = 'BFGS',
   gp.ei.opt = 'GP-Opt',
   gp.ei.lhs = 'GP-LHS',
+  gp.ei.sobol = 'GP-Sob',
   gp.ei.voralti = 'GP-Vor',
   gp.ei.tri = 'GP-Tri',
   gp.ei.tr = 'GP-TR'
@@ -190,16 +199,16 @@ pretty_sim_names <- list(
   dacca = 'Dacca Cholera Simulator (P=24)'
 )
 
-ltys <- sapply(competitors, function(comp) 1)
-cols <- sapply(1:length(competitors), function(i) rainbow(length(competitors))[i])
+#cols <- sapply(1:length(competitors), function(i) rainbow(length(competitors))[i])
 
-names(cols) <- competitors
-names(ltys) <- competitors
 short_comp <- sapply(competitors, function(comp) {
     if (comp=='nm') return('nm')
     if (comp=='bfgs') return('bfgs')
     csplit <- strsplit(comp,"\\.")[[1]]
     os <- csplit[3]
+    if (os=='voralti') {
+        return('vor')
+    }
     return(os)
 })
 print(short_comp)

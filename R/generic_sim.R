@@ -8,7 +8,6 @@ args <- commandArgs(trailingOnly=TRUE)
 #seed <- args[2]
 ind <- args[1]
 
-
 source("R/parset.R")
 
 print("Func:")

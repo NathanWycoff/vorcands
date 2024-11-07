@@ -98,6 +98,21 @@ plot(NA,NA,xlim=c(1,end), ylim=c(ll,ul), main = pretty_sim_names[[func]], xlab='
 max_intervals <- Inf
 
 for (comp in competitors) {
+  if (all(is.na(progs[[comp]]))) {
+    print("Skipping nan competitor:")
+    print(comp)
+  } else {
+    if (length(competitors) <= max_intervals) {
+      prog <- progs[[comp]]
+      prog <- prog[apply(prog, 1, function(x) !all(is.na(x))),]
+      il = apply(prog, 1, function(x) quantile(x, ql, na.rm = T))
+      iu = apply(prog, 1, function(x) quantile(x, qu, na.rm = T))
+      polygon(c(1:length(il),length(il):1), c(il,rev(iu)), col = adjustcolor(cols[comp], alpha.f = 0.2), border = NA)
+    }
+  }
+}
+
+for (comp in competitors) {
   print(comp)
   print(cols[[comp]])
   if (all(is.na(progs[[comp]]))) {
@@ -105,24 +120,26 @@ for (comp in competitors) {
     print(comp)
   } else {
     #points(1:end, rowMedians(progs[[comp]]), type = 'l', lty = ltys[comp], col = cols[comp], lwd = lwd)
-    points(1:end, apply(progs[[comp]], 1, function(x) median(x, na.rm = T)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+    points(1:end, apply(progs[[comp]], 1, function(x) median(x, na.rm = T)), type = 'l', col = cols[comp], lwd = 0.5*lwd)
     if (length(competitors) <= max_intervals) {
-      points(1:end, apply(progs[[comp]], 1, function(x) quantile(x, ql, na.rm = T)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
-      points(1:end, apply(progs[[comp]], 1, function(x) quantile(x, qu, na.rm = T)), type = 'l', lty = ltys[comp], col = cols[comp], lwd = 0.5*lwd)
+      il = apply(progs[[comp]], 1, function(x) quantile(x, ql, na.rm = T))
+      iu = apply(progs[[comp]], 1, function(x) quantile(x, qu, na.rm = T))
+      points(1:end, il, type = 'l', lty = 'dotted', col = cols[comp], lwd = 0.5*lwd)
+      points(1:end, iu, type = 'l', lty = 'dotted', col = cols[comp], lwd = 0.5*lwd)
     }
   }
 }
-#legend('topright', legend = competitors, lty=ltys,col=cols, lwd = lwd, bg = 'white')
-#legend('bottomleft', legend = competitors, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5)
 dev.off()
 
 #pdf("legend.pdf", width = 6, height = 2)
-pdf("legend.pdf", width = 6, height = 4)
+if (func=='ackley10') {
+    pdf("legend.pdf", width = 6, height = 4)
 
-plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
-#legend('bottomleft', legend = pretty_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5, ncol = 4)
-legend('bottomleft', legend = short_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.4, ncol = 7)
-dev.off()
+    plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
+    #legend('bottomleft', legend = pretty_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.5, ncol = 4)
+    legend('bottomleft', legend = short_comp, lty=ltys,col=cols, lwd = lwd, bg = 'white', cex = 0.4, ncol = 7)
+    dev.off()
+}
 
 pdf(paste(func,'_box.pdf',sep=''), width = 7, height = 4)
 par(mar=c(4.7,2,1,0)+0.1)
@@ -133,7 +150,7 @@ half <- round(end/2)
 labs <- unname(rep(sapply(names(progs), function(x) short_method_names[[x]]), rep(ncol(progs[[1]]),length(names(progs)))))
 #factor(labs, levels = unique(labs))
 #labs <- factor(labs, levels = c("nm","bfgs","gp.ei.opt","gp.ei.lhs","gp.ei.voriRIS","gp.ei.voriRLS","gp.ei.voriRAS"))
-labs <- factor(labs, levels = short_comp)
+labs <- factor(labs, levels = short_method_names)
 
 mids <- do.call(c, lapply(progs, function(p) p[half,]))
 if (func=='rosen10') {
