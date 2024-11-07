@@ -1,7 +1,7 @@
 source("R/functions/function_lib.R")
 
-test <- TRUE
-#test <- FALSE
+#test <- TRUE
+test <- FALSE
 
 if (test) {
   print("TESTING ONLY!")
@@ -9,7 +9,7 @@ if (test) {
 if (!exists('func')) stop("Need to define func before calling sim_settings.R")
 
 
-problems <- c("ackley10","levy10","rosen10","lunar","push","rover","pomp10","dacca")
+problems <- c("ackley10","levy10","rosen10","lunar","push","rover","pomp10log","dacca")
 
 if (func=='goldprice') {
   f <- goldprice
@@ -124,7 +124,8 @@ crits_path <- paste(substr(sim_path,1,nchar(sim_path)-1),'_crits/',sep='')
 #print("Only sobol!!!")
 #competitors <- c('gp.ei.sobol')
 # NOTE: The first method should be somthing like nm, gp.ei.lhs or anything except for gp.ei.tri because I rely on this having the normal length later.
-competitors <- c('nm','bfgs','gp.ei.opt','gp.ei.lhs','gp.ei.sobol','gp.ei.tri', 'gp.ei.tr','gp.ei.voralti')
+#competitors <- c('nm','bfgs','gp.ei.opt','gp.ei.lhs','gp.ei.sobol','gp.ei.tri', 'gp.ei.tr','gp.ei.voralti')
+competitors <- c('nm','bfgs','gp.ei.opt','gp.ei.lhs','gp.ei.sobol','gp.ei.tri','gp.ei.voralti')
 #competitors <- c('gp.ei.voralti')
 #competitors <- c('gp.ei.tr')
 
@@ -151,6 +152,9 @@ if (func=='rover') {
     competitors <- competitors[competitors!='bfgs']
     competitors <- competitors[competitors!='gp.ei.opt']
     competitors <- competitors[competitors!='gp.ei.sobol']
+} 
+
+if (m > 10) {
     competitors <- competitors[competitors!='gp.ei.tri']
 } 
 

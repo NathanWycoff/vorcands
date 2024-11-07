@@ -39,16 +39,16 @@ In practice, we recommend alternating between "rect" and "lhs" when dealing with
 ## To reproduce the results in the paper:
 
 ### Installation Instructions:
-Since the numerical experiments use functions written in Python, there are many more installation requirements to reproduce the results than simply to use the methodology.
+Since the numerical experiments use functions written in Python, there are more installation requirements to reproduce the results than simply to use the methodology.
 
 - Install RANN.Linf: 
     R CMD INSTALL ./RANN.Linf
-- Make a python virtual environment named ".venv" (R is expecting this name to be used, and for it to exist in the root of this directory.)
-    maybe using "python3 -m venv .venv"
-- After loading this venv (in the terminal: "source .venv/bin/activate"), install python packages:
-    pip install pygame gym[box2d] botorch rpy2 matplotlib pandas
+- Make a conda virtual environment named "vorcands" (R is expecting this name to be used, and for it to exist in the root of this directory.)
+    maybe using "conda create -n vorcands"
+- After loading this venv (in the terminal: "conda activate vorcands"), install python packages:
+    conda install pygame gym[box2d] botorch rpy2 matplotlib pandas
 - Install CRAN R packages 
-    install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","lhs","geometry","SobolSequence"))
+    install.packages(c("stringr","hetGP","akima","laGP","Rcpp","pomp","reticulate","lhs","geometry","SobolSequence","reticulate","geometry"))
 - Clone the tricands repo:
     git clone https://bitbucket.org/gramacylab/tricands.git
 

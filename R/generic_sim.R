@@ -1,5 +1,5 @@
 tt <- Sys.time()
-.libPaths('/home/r41x461/vorcands/swaggy/')
+.libPaths( '/home/nwycoff_umass_edu/R/x86_64-pc-linux-gnu-library/4.4')
 args <- commandArgs(trailingOnly=TRUE)
 #func <- 'pomp10'
 #func <- 'ackley10'

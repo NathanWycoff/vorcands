@@ -1,6 +1,8 @@
 ## Opt-fringecands?
 #library(Rfast)
 
+.libPaths( '/home/nwycoff_umass_edu/R/x86_64-pc-linux-gnu-library/4.4')
+
 func <- commandArgs(trailingOnly=TRUE)[1]
 source("R/sim_settings.R")
 
@@ -163,7 +165,7 @@ for (f in files) {
 }
 
 names <- dfs[[1]][,1]
-tdf <- sapply(dfs,function(x) x[,'times'])
+tdf <- data.frame(sapply(dfs,function(x) x[,'times']))
 rownames(tdf) <- names
 tdf <- log10(tdf[timecomps,])
 
