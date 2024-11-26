@@ -196,7 +196,18 @@ pretty_sim_names <- list(
   push = 'Pygame Push (P=14)',
   rover = 'Pygame Rover (P=60)',
   pomp10log = 'Pomp10 Simulator (P=10)',
-  dacca = 'Dacca Cholera Simulator (P=24)'
+  dacca = 'Dhaka Cholera Simulator (P=24)'
+)
+
+oneword_sim_names <- list(
+ackley10 = 'Ackley',
+  levy10 = 'Levy',
+  rosen10 = 'Rosen',
+  lunar = 'Lunar',
+  push = 'Push',
+  rover = 'Rover',
+  pomp10log = 'Pomp10',
+  dacca = 'Dhaka'
 )
 
 #cols <- sapply(1:length(competitors), function(i) rainbow(length(competitors))[i])

@@ -11,7 +11,7 @@ if ('gp.ei.corner' %in% competitors) {
 }
 
 #pretty_comp <- sapply(competitors, function(x) pretty_method_names[[x]])
-#short_comp <- sapply(competitors, function(x) short_method_names[[x]])
+#short_comp <- sapply(competitors, function(x) short_comp[[x]])
 
 ### Progress
 files <- list.files(sim_path, full.names = TRUE)
@@ -141,34 +141,39 @@ if (func=='ackley10') {
     dev.off()
 }
 
+progs[['nm']] <- pmin(progs[['nm']],4)
+
+#short_pretty_sim_name <- strsplit(pretty_sim_names[[func]],' ')[[1]][1]
+short_pretty_sim_name <- oneword_sim_names[[func]]
 pdf(paste(func,'_box.pdf',sep=''), width = 7, height = 4)
 par(mar=c(4.7,2,1,0)+0.1)
 par(mgp=c(1,0.6,0)+0.1)
 par(mfrow=c(1,2))
 end <- dim(progs[[1]])[1]
 half <- round(end/2)
-labs <- unname(rep(sapply(names(progs), function(x) short_method_names[[x]]), rep(ncol(progs[[1]]),length(names(progs)))))
+labs <- unname(rep(sapply(names(progs), function(x) short_comp[[x]]), rep(ncol(progs[[1]]),length(names(progs)))))
 #factor(labs, levels = unique(labs))
 #labs <- factor(labs, levels = c("nm","bfgs","gp.ei.opt","gp.ei.lhs","gp.ei.voriRIS","gp.ei.voriRLS","gp.ei.voriRAS"))
-labs <- factor(labs, levels = short_method_names)
+labs <- factor(labs, levels = short_comp)
 
 mids <- do.call(c, lapply(progs, function(p) p[half,]))
 if (func=='rosen10') {
   mids <- log10(mids)
 }
 yl <- range(mids[!(labs %in% c('NM','BFGS'))], na.rm = T)
-boxplot(mids~labs, main = paste("Iteration",half), xlab = '', las = 2, ylab='', ylim = yl)
+boxplot(mids~labs, main = paste(short_pretty_sim_name,"Iteration",half), xlab = '', las = 2, ylab='', ylim = yl)
 #bp <- boxplot(mids~labs, main = paste("Iteration",half), xlab = '', las = 2, xaxt = "n")
 #tick <- seq_along(bp$names)
 #axis(1, at = tick, labels = FALSE)
 #text(tick-0.3, par("usr")[3] - 0.5, bp$names, srt = 45, xpd = TRUE)
+
 
 ends <- do.call(c, lapply(progs, function(p) p[end,]))
 if (func=='rosen10') {
   ends <- log10(ends)
 }
 yl <- range(ends[!(labs %in% c('NM','BFGS'))], na.rm = T)
-boxplot(ends~labs, main = paste("Iteration",end), xlab = '', las = 2, angle = 45, ylab='', ylim = yl)
+boxplot(ends~labs, main = paste(short_pretty_sim_name,"Iteration",end), xlab = '', las = 2, angle = 45, ylab='', ylim = yl)
 dev.off()
 
 ### Time
@@ -186,7 +191,7 @@ tdf <- data.frame(sapply(dfs,function(x) x[,'times']))
 rownames(tdf) <- names
 tdf <- log10(tdf[timecomps,])
 
-rownames(tdf) <- sapply(rownames(tdf), function(n) short_method_names[[n]])
+rownames(tdf) <- sapply(rownames(tdf), function(n) short_comp[[n]])
 
 pdf(paste(func,'_time.pdf',sep=''), width = 4, height = 4)
 par(mar=c(4.7,3,1,0)+0.1)
